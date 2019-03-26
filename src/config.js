@@ -1,17 +1,7 @@
-const fs = require('fs');
-const yaml = require('js-yaml');
+const yaml = require('./yaml');
 
-module.exports = async () =>
+module.exports = () =>
 {
     const file = process.env.CONFIG_FILEPATH || 'config.yml';
-
-    return (() => {
-        try {
-            return yaml.safeLoad(fs.readFileSync(file, 'utf8'));
-        }
-        catch (e) {
-            return null;
-        }
-    })();
+    return yaml.load(file);
 }
-
