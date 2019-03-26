@@ -1,0 +1,35 @@
+---
+
+title:       "GitLab Status Notification"
+color:       "{{misc.color}}"
+author_name: "{{user.name}}"
+author_link: "{{user.url}}"
+author_icon: "{{user.avatar}}"
+fallback:    "GitLab Status Notification"
+pretext:     "{{pipe.status_icon}} Pipeline <{{pipe.url}}|#{{pipe.id}}> has *{{pipe.status}}* for project <{{proj.url}}|{{proj.name}}>:"
+text:        "Pipeline has finished in {{pipe.duration}} seconds and passed in all stages"
+
+fields:
+  - title: Stages
+    value: "{{pipe.stages}}"
+    short: false
+
+  - title: Project
+    value: "<{{proj.url}}|{{proj.name}}>"
+    short: true
+
+  - title: Branch
+    value: "<{{proj.branch_url}}|{{proj.branch}}>"
+    short: true
+
+  - title: Last commit
+    value: "```{{commit.message}}```"
+    short: false
+
+  - title: Commit author
+    value: "`{{commit.author}} <{{commit.email}}>`"
+    short: false
+
+footer: Gitlab-CI
+footer_icon: https://about.gitlab.com/images/ci/gitlab-ci-cd-logo_2x.png
+ts: "{{pipe.finish}}"
