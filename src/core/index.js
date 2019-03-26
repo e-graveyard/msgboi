@@ -1,28 +1,22 @@
-async function loadConfig(file)
+const GitlabEvent  = require('./gitlab');
+const SlackChannel = require('./slack');
+
+module.exports = async (content) =>
 {
-    const fs = require('fs');
-    const yaml = require('js-yaml');
-
-    return (() => {
-        try {
-            return yaml.safeLoad(fs.readFileSync(file, 'utf8'));
-        }
-        catch (e) {
-            return null;
-        }
-    })();
-}
-
-
-async function main()
-{
-    const configFile = process.env.CONFIG_FILEPATH || 'config.yml';
-
-    const config = await loadConfig(configFile);
-    if (config != null) {
-        console.log(JSON.stringify(config));
+    const config  = await require('./config')();
+    if (!config) {
+        console.log('Something went wrong.');
+        return;
     }
+
+    const rules = config.notification.rules;
+    const event = new GitlabEvent(content);
+    const channel = rules[event.getBranch()];
+    if (!channel) {
+        console.log('Something went wrong.');
+        return;
+    }
+
+    const slack = new SlackChannel(channel);
+    slack.notify(event.toSlackMessage());
 }
-
-
-module.exports = main;
