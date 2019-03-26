@@ -1,7 +1,12 @@
-const yaml = require('./yaml');
+const File = require('./file');
 
 module.exports = () =>
 {
-    const file = process.env.CONFIG_FILEPATH || 'config.yml';
-    return yaml.load(file);
+    const name = process.env.CONFIG_FILEPATH || 'config.yml';
+    const file = new File(name);
+
+    if (!file.isReady())
+        return null;
+
+    return file.toYAML();
 }
