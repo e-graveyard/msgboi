@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/caiertl/msgboi#readme",
   "dependencies": {
+    "dayjs": "^1.8.11",
     "js-yaml": "^3.13.0",
     "mustache": "^3.0.1"
   }
