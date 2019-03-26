@@ -1,4 +1,8 @@
 ---
 
-- branch: master
-  channel: TCP-Master
+notification:
+  rules:
+    master:
+      - Channel One
+      - Channel Two
+    staging: Channel Three
