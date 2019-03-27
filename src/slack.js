@@ -1,10 +1,7 @@
-module.exports = class
+function notify(channel, message)
 {
-    constructor(channel) {
-        this.channel = channel;
-    }
+}
 
-    notify(message) {
-
-    }
+module.exports = {
+    notify: notify
 }
