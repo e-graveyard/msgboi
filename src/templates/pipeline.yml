@@ -1,13 +1,13 @@
 ---
 
 title:       "GitLab Status Notification"
+fallback:    "GitLab Status Notification"
 color:       "{{misc.color}}"
+text:        "Pipeline has finished in {{pipe.duration}} seconds and {{pipe.status}} in all stages"
+pretext:     "{{pipe.status_icon}} Pipeline <{{pipe.url}}|#{{pipe.id}}> has *{{pipe.status}}* for project <{{proj.url}}|{{proj.name}}>:"
 author_name: "{{user.name}}"
 author_link: "{{user.url}}"
 author_icon: "{{user.avatar}}"
-fallback:    "GitLab Status Notification"
-pretext:     "{{pipe.status_icon}} Pipeline <{{pipe.url}}|#{{pipe.id}}> has *{{pipe.status}}* for project <{{proj.url}}|{{proj.name}}>:"
-text:        "Pipeline has finished in {{pipe.duration}} seconds and passed in all stages"
 
 fields:
   - title: Stages
