@@ -9,6 +9,90 @@ const mustache = require('mustache');
 const data = require('./data');
 const file = require('./file');
 
+function getStatusSymbol(status)
+{
+    switch (status) {
+        case 'success':
+            return ':heavy_check_mark:';
+            break;
+
+        case 'failed':
+            return ':x:';
+            break;
+
+        case 'skipped':
+            return ':grey_exclamation:';
+            break;
+    }
+}
+
+function getStatusColor(status)
+{
+    switch (status) {
+        case 'success':
+            return '#36a64f';
+            break;
+
+        case 'failed':
+            return '#d40e0d';
+            break;
+    }
+}
+
+function orderStages(builds)
+{
+    const stages = {};
+    builds.map((build) => {
+        const name = build.stage;
+
+        if (stages.hasOwnProperty(name)) {
+            if (stages[name].status == 'success')
+                stages[name].status = build.status;
+        }
+        else {
+            stages[name] = {
+                id: build.id,
+                status: build.status,
+            };
+        }
+    });
+
+    const order = [];
+    const stagesById = {};
+    for (const key in stages) {
+        const id = stages[key].id;
+        order.push(id);
+
+        stagesById[id] = {
+            name:   key,
+            status: stages[key].status,
+        };
+    }
+
+    order.sort();
+
+    const stagesOrdered = [];
+    order.map((id) => {
+        stagesOrdered.push(stagesById[id]);
+    });
+
+    return stagesOrdered;
+}
+
+function drawStagesStatus(stages)
+{
+    let statusf = "";
+
+    stages.map((stage) => {
+        statusf = statusf
+            .concat(`(${getStatusSymbol(stage.status)}) *${stage.name}* >> `);
+    });
+
+    statusf = statusf.substring(0, statusf.length - 4);
+
+    return statusf;
+}
+
 function getPipelineInfo(e)
 {
     const m = {};
@@ -26,12 +110,13 @@ function getPipelineInfo(e)
     m.pipe = {
         id:       oattr.id,
         url:      `${m.proj.url}/pipelines/${oattr.id}`,
-        status:   oattr.detailed_status,
+        status:   oattr.detailed_status.toUpperCase(),
         duration: oattr.duration,
         finish:   dayjs(oattr.finished_at).unix(),
+        stages:   drawStagesStatus(orderStages(e.builds)),
     };
 
-    m.pipe.status_icon = (m.pipe.status === 'passed' ? ':heavy_check_mark:' : ':x:');
+    m.pipe.status_icon = getStatusSymbol(oattr.status);
 
     // user-related
     m.user = {
@@ -49,7 +134,7 @@ function getPipelineInfo(e)
 
     // etc
     m.misc = {
-        color: (m.pipe.status === 'passed' ? '#36a64f' : '#d40e0d'),
+        color: getStatusColor(oattr.status),
     }
 
     return m;
