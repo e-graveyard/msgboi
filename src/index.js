@@ -32,13 +32,4 @@ module.exports = async (data) =>
     }
 
     return message;
-
-    /*
-    const channel = rules[event.getBranch()];
-    if (!channel) {
-        return;
-    }
-
-    slack.notify(channel, event.toSlackMessage());
-    */
 }
