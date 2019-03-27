@@ -2,16 +2,16 @@
 
 title:       "GitLab Status Notification"
 fallback:    "GitLab Status Notification"
-color:       "{{misc.color}}"
-text:        "Pipeline has finished in {{pipe.duration}} seconds and {{pipe.status}} in all stages"
-pretext:     "{{pipe.status_icon}} Pipeline <{{pipe.url}}|#{{pipe.id}}> has *{{pipe.status}}* for project <{{proj.url}}|{{proj.name}}>:"
+color:       "{{pipe.status.color}}"
+text:        "Pipeline has finished in {{pipe.duration}} seconds and {{pipe.status.text}} in {{pipe.stages.count}} stages"
+pretext:     "{{pipe.status.icon}} Pipeline <{{pipe.url}}|#{{pipe.id}}> has *{{pipe.status.text}}* for project <{{proj.url}}|{{proj.name}}>:"
 author_name: "{{user.name}}"
 author_link: "{{user.url}}"
 author_icon: "{{user.avatar}}"
 
 fields:
   - title: Stages
-    value: "{{pipe.stages}}"
+    value: "{{pipe.stages.repr}}"
     short: false
 
   - title: Project
@@ -19,7 +19,7 @@ fields:
     short: true
 
   - title: Branch
-    value: "<{{proj.branch_url}}|{{proj.branch}}>"
+    value: "<{{proj.branch.url}}|{{proj.branch.name}}>"
     short: true
 
   - title: Last commit
