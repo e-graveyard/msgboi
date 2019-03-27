@@ -1,22 +1,33 @@
-const GitlabEvent  = require('./gitlab');
-const SlackChannel = require('./slack');
+// modules
+const MsgboiError = require('./error');
+const slack = require('./slack');
+const template = require('./template');
 
-module.exports = async (content) =>
+module.exports = async (data) =>
 {
+    // tries to load "config.yml" (or whatever defined at "CONFIG_FILEPATH")
     const config  = await require('./config')();
-    if (!config) {
-        console.log('Something went wrong.');
-        return;
-    }
+    if (!config)
+        throw new MsgboiError(500, 'Unable to load the configurations');
 
     const rules = config.notification.rules;
-    const event = new GitlabEvent(content);
-    const channel = rules[event.getBranch()];
-    if (!channel) {
-        console.log('Something went wrong.');
+
+    const event = await (() => {
+        try {
+            const parsedData = JSON.parse(data);
+            if (!parsedData.object_kind)
+                throw new MsgboiError(400, 'Unable to identify the event kind');
+
+            return parsedData;
+        }
+        catch (e) {
+            throw new MsgboiError(400, 'Unable to parse the received POST data');
+        }
+    })();
+
+    // create a new template based on the received content
+    const message = await template.render(event);
+    if (!message) {
         return;
     }
-
-    const slack = new SlackChannel(channel);
-    slack.notify(event.toSlackMessage());
 }
