@@ -102,39 +102,41 @@ function getPipelineInfo(e)
     m.proj = {
         name:       e.project.name,
         url:        e.project.web_url,
-        branch:     oattr.ref,
-        branch_url: `${e.project.web_url}/tree/${oattr.ref}`,
+        branch: {
+            name: oattr.ref,
+            url:  `${e.project.web_url}/tree/${oattr.ref}`,
+        },
     };
 
     // pipeline info
     m.pipe = {
         id:       oattr.id,
         url:      `${m.proj.url}/pipelines/${oattr.id}`,
-        status:   oattr.detailed_status.toUpperCase(),
         duration: oattr.duration,
         finish:   dayjs(oattr.finished_at).unix(),
-        stages:   drawStagesStatus(orderStages(e.builds)),
+        status: {
+            text:  oattr.detailed_status.toUpperCase(),
+            icon:  getStatusSymbol(oattr.status),
+            color: getStatusColor(oattr.status),
+        },
+        stages: {
+            repr:  drawStagesStatus(orderStages(e.builds)),
+            count: oattr.stages.length,
+        }
     };
 
-    m.pipe.status_icon = getStatusSymbol(oattr.status);
-
-    // user-related
+    // event author
     m.user = {
         name:   e.user.name,
         url:    `https://gitlab.com/${e.user.username}`,
         avatar: e.user.avatar_url,
     };
 
-    // commit info
+    // commit author
     m.commit = {
         message: e.commit.message,
         author:  e.commit.author.name,
         email:   e.commit.author.email,
-    }
-
-    // etc
-    m.misc = {
-        color: getStatusColor(oattr.status),
     }
 
     return m;
