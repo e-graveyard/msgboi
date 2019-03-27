@@ -1,26 +1,37 @@
 const fs = require('fs');
-const yaml = require('js-yaml');
+const data = require('./data');
 
-module.exports = class
+function read(file)
 {
-    constructor(file) {
-        this.file = file;
-        this.ready = fs.existsSync(file);
-    }
+    return (() => {
+        try {
+            return fs.readFileSync(file, 'utf8');
+        }
+        catch (e) {
+            console.log(e);
+            return null;
+        }
+    })();
+}
 
-    isReady() {
-        return this.ready;
-    }
+function isReady(file)
+{
+    return fs.existsSync(file);
+}
 
-    read() {
-        return fs.readFileSync(this.file, 'utf8');
-    }
+function fromJSON(file)
+{
+    return data.fromJSON(read(file));
+}
 
-    toJSON() {
-        return JSON.parse(this.read());
-    }
+function fromYAML(file)
+{
+    return data.fromYAML(read(file));
+}
 
-    toYAML() {
-        return yaml.safeLoad(this.read());
-    }
+module.exports = {
+    read:     read,
+    isReady:  isReady,
+    fromJSON: fromJSON,
+    fromYAML: fromYAML,
 }
