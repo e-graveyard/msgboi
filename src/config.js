@@ -2,7 +2,7 @@ const file = require('./file');
 
 module.exports = () =>
 {
-    const name = process.env.CONFIG_FILEPATH || 'config.yml';
+    const name = process.env.MSGBOI_CONFIG || 'config.yml';
 
     return (() => {
         try {
