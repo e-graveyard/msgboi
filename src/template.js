@@ -79,6 +79,16 @@ function orderStages(builds)
     return stagesOrdered;
 }
 
+function getFailedStage(stages)
+{
+    for(let i = 0; i < stages.length; i++) {
+        if (stages[i].status == 'failed')
+            return stages[i].name;
+    }
+
+    return null;
+}
+
 function drawStagesStatus(stages)
 {
     let statusf = "";
@@ -97,6 +107,8 @@ function getPipelineInfo(e)
 {
     const m = {};
     const oattr = e.object_attributes;
+
+    const stages = orderStages(e.builds);
 
     // git project info
     m.proj = {
@@ -120,7 +132,7 @@ function getPipelineInfo(e)
             color: getStatusColor(oattr.status),
         },
         stages: {
-            repr:  drawStagesStatus(orderStages(e.builds)),
+            repr:  drawStagesStatus(stages),
             count: oattr.stages.length,
         }
     };
@@ -137,6 +149,14 @@ function getPipelineInfo(e)
         message: e.commit.message,
         author:  e.commit.author.name,
         email:   e.commit.author.email,
+    }
+
+    m.decor = {};
+    if (oattr.status == 'success') {
+        m.decor.stage_status = `${oattr.detailed_status} in ${m.pipe.stages.count} stages`;
+    }
+    else {
+        m.decor.stage_status = `${oattr.detailed_status} at stage \'${getFailedStage(stages)}\'`;
     }
 
     return m;
