@@ -1,5 +1,10 @@
-// 3rd-party
-const dayjs = require('dayjs');
+/**
+    --- TODO: docs ---
+ */
+function toUnixTime(timestamp)
+{
+    return (new Date(timestamp).getTime() / 1000 | 0);
+}
 
 /**
     --- TODO: docs ---
@@ -134,7 +139,7 @@ function getPipelineInfo(e)
         id:       oattr.id,
         url:      `${m.proj.url}/pipelines/${oattr.id}`,
         duration: oattr.duration,
-        finish:   dayjs(oattr.finished_at).unix(),
+        finish:   toUnixTime(oattr.finished_at),
         status: {
             state: oattr.status,
             text:  oattr.detailed_status.toUpperCase(),
