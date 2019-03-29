@@ -1,5 +1,8 @@
 const YAML = require('js-yaml');
 
+/**
+    --- TODO: docs ---
+ */
 function fromJSON(data)
 {
     return (() => {
@@ -13,6 +16,10 @@ function fromJSON(data)
     })();
 }
 
+
+/**
+    --- TODO: docs ---
+ */
 function fromYAML(data)
 {
     return (() => {
@@ -26,6 +33,10 @@ function fromYAML(data)
     })();
 }
 
+
+/**
+    --- TODO: docs ---
+ */
 module.exports = {
     fromJSON: fromJSON,
     fromYAML: fromYAML

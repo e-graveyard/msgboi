@@ -1,3 +1,6 @@
+/**
+    --- TODO: docs ---
+ */
 module.exports = class MsgboiError extends Error
 {
     constructor(code, message) {
