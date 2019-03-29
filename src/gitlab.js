@@ -50,7 +50,7 @@ function getStatusColor(status)
  */
 function getFailedStage(stages)
 {
-    for(let i = 0; i < stages.length; i++) {
+    for (let i = 0; i < stages.length; i++) {
         if (stages[i].status == 'failed')
             return stages[i].name;
     }
@@ -71,9 +71,7 @@ function drawStagesStatus(stages)
             .concat(`(${getStatusSymbol(stage.status)}) *${stage.name}* >> `);
     });
 
-    statusf = statusf.substring(0, statusf.length - 4);
-
-    return statusf;
+    return (statusf.substring(0, statusf.length - 4));
 }
 
 
@@ -176,12 +174,11 @@ function getPipelineInfo(e)
     }
 
     m.decor = {};
-    if (oattr.status == 'success') {
-        m.decor.stage_status = `${oattr.detailed_status} in ${m.pipe.stages.count} stages`;
-    }
-    else {
-        m.decor.stage_status = `${oattr.detailed_status} at stage \'${getFailedStage(stages)}\'`;
-    }
+    m.decor.stage_status = (
+        oattr.status === 'success'
+        ? `${oattr.detailed_status} in ${m.pipe.stages.count} stages`
+        : `${oattr.detailed_status} at stage \'${getFailedStage(stages)}\'`
+    );
 
     return m;
 }
