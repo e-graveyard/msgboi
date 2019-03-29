@@ -8,13 +8,14 @@ const file = require('./file');
 /**
     --- TODO: docs ---
  */
-function render(content)
+function render(content, templateFile)
 {
+    // do not escape special character for HTML sake
     mustache.escape = ((text) => { return text; });
 
     return (async () => {
         try {
-            const templateFile = `./templates/${content.kind}.yml`;
+            templateFile = `./templates/${templateFile}.yml`;
             if (!file.isReady(templateFile))
                 return null;
 

@@ -1,9 +1,14 @@
 // modules
-const MsgboiError = require('./error');
-const slack    = require('./slack');
-const gitlab   = require('./gitlab');
-const template = require('./template');
+const slack = require('./slack');
+const gitlab = require('./gitlab');
+const templateEngine = require('./template');
 
+const MsgboiError = require('./error');
+
+
+/**
+    --- TODO: docs ---
+ */
 module.exports = async (payload) =>
 {
     /*
@@ -30,22 +35,25 @@ module.exports = async (payload) =>
         specific keys: "object_kind" and "object_attributes". If this keys are
         undefined, the payload is probably malformed.
     */
-    let request = null;
-    let kind = null;
-    let attr = null;
-    [request, kind, attr] = await (() => {
+    const request = await (() => {
         try {
             const data = JSON.parse(payload);
             if (!(data.object_kind && data.object_attributes))
                 throw new MsgboiError(400, 'Unable to identify the event kind');
 
-            return [data, data.object_kind, data.object_attributes];
+            return data;
         }
         catch (e) {
             console.log(e);
             throw new MsgboiError(400, 'Unable to parse the received POST data');
         }
     })();
+
+    const event = gitlab.read(request);
+    if (!event)
+        return null;
+
+    const kind = event.kind;
 
     /*
         msgboi can handle two kinds of events: pipeline events and merge
@@ -54,10 +62,15 @@ module.exports = async (payload) =>
         instance, has four possible status: "pending", "running", "success" and
         "failed".
     */
+    let template = "";
     switch(kind) {
         case 'pipeline':
-            if (!(attr.status === 'success' || attr.status === 'failed'))
+            const status = event.pipe.status.state;
+            const notify = __config.event[kind][status].notify;
+            if (!notify)
                 return null;
+
+            template = __config.event[kind][status].template;
             break;
 
         case 'merge_request':
@@ -68,12 +81,12 @@ module.exports = async (payload) =>
             break;
     }
 
-    const event = gitlab.read(request);
+    template = template || kind;
 
     // create a new template based on the received content
-    const message = await template.render(event);
+    const message = await templateEngine.render(event, template);
     if (!message) {
-        return;
+        throw new MsgboiError(500, 'Unable to generate the message');
     }
 
     return message;
