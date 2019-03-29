@@ -1,5 +1,9 @@
 const file = require('./file');
 
+
+/**
+    --- TODO: docs ---
+ */
 module.exports = () =>
 {
     const name = process.env.MSGBOI_CONFIG || 'config.yml';

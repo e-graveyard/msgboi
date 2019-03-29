@@ -6,6 +6,7 @@ function toUnixTime(timestamp)
     return (new Date(timestamp).getTime() / 1000 | 0);
 }
 
+
 /**
     --- TODO: docs ---
  */
@@ -26,6 +27,7 @@ function getStatusSymbol(status)
     }
 }
 
+
 /**
     --- TODO: docs ---
  */
@@ -42,6 +44,7 @@ function getStatusColor(status)
     }
 }
 
+
 /**
     --- TODO: docs ---
  */
@@ -55,6 +58,10 @@ function getFailedStage(stages)
     return null;
 }
 
+
+/**
+    --- TODO: docs ---
+ */
 function drawStagesStatus(stages)
 {
     let statusf = "";
@@ -68,6 +75,7 @@ function drawStagesStatus(stages)
 
     return statusf;
 }
+
 
 /**
     --- TODO: docs ---
@@ -111,6 +119,7 @@ function orderStages(builds)
 
     return stagesOrdered;
 }
+
 
 /**
     --- TODO: docs ---
@@ -177,12 +186,12 @@ function getPipelineInfo(e)
     return m;
 }
 
+
 /**
     --- TODO: docs ---
  */
-function getMergeRequestInfo(e)
-{
-}
+function getMergeRequestInfo(e) {}
+
 
 /**
     --- TODO: docs ---
@@ -200,6 +209,7 @@ function read(event)
 
     return handler[kind](event);
 }
+
 
 /**
     --- TODO: docs ---

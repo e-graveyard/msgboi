@@ -1,4 +1,3 @@
-// modules
 const slack = require('./slack');
 const gitlab = require('./gitlab');
 const templateEngine = require('./template');
@@ -62,7 +61,7 @@ module.exports = async (payload) =>
         instance, has four possible status: "pending", "running", "success" and
         "failed".
     */
-    let template = "";
+    let template = '';
     switch(kind) {
         case 'pipeline':
             const status = event.pipe.status.state;
@@ -85,9 +84,8 @@ module.exports = async (payload) =>
 
     // create a new template based on the received content
     const message = await templateEngine.render(event, template);
-    if (!message) {
+    if (!message)
         throw new MsgboiError(500, 'Unable to generate the message');
-    }
 
     return message;
 }

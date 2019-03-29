@@ -1,9 +1,8 @@
-// 3rd-party
 const mustache = require('mustache');
 
-// modules
 const data = require('./data');
 const file = require('./file');
+
 
 /**
     --- TODO: docs ---
@@ -32,6 +31,7 @@ function render(content, templateFile)
         }
     })();
 }
+
 
 /**
     --- TODO: docs ---
