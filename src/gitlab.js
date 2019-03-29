@@ -136,6 +136,7 @@ function getPipelineInfo(e)
         duration: oattr.duration,
         finish:   dayjs(oattr.finished_at).unix(),
         status: {
+            state: oattr.status,
             text:  oattr.detailed_status.toUpperCase(),
             icon:  getStatusSymbol(oattr.status),
             color: getStatusColor(oattr.status),
@@ -188,6 +189,9 @@ function read(event)
         pipeline:      getPipelineInfo,
         merge_request: getMergeRequestInfo,
     };
+
+    if (!handler.hasOwnProperty(kind))
+        return null;
 
     return handler[kind](event);
 }
