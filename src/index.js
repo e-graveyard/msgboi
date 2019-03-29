@@ -1,3 +1,23 @@
+/*
+The person who associated a work with this deed has dedicated the work to the
+public domain by waiving all of his or her rights to the work worldwide under
+copyright law, including all related and neighboring rights, to the extent
+allowed by law.
+
+You can copy, modify, distribute and perform the work, even for commercial
+purposes, all without asking permission.
+
+AFFIRMER OFFERS THE WORK AS-IS AND MAKES NO REPRESENTATIONS OR WARRANTIES OF
+ANY KIND CONCERNING THE WORK, EXPRESS, IMPLIED, STATUTORY OR OTHERWISE,
+INCLUDING WITHOUT LIMITATION WARRANTIES OF TITLE, MERCHANTABILITY, FITNESS FOR
+A PARTICULAR PURPOSE, NON INFRINGEMENT, OR THE ABSENCE OF LATENT OR OTHER
+DEFECTS, ACCURACY, OR THE PRESENT OR ABSENCE OF ERRORS, WHETHER OR NOT
+DISCOVERABLE, ALL TO THE GREATEST EXTENT PERMISSIBLE UNDER APPLICABLE LAW.
+
+For more information, please see
+<http://creativecommons.org/publicdomain/zero/1.0/>
+*/
+
 const slack = require('./slack');
 const gitlab = require('./gitlab');
 const templateEngine = require('./template');
@@ -99,21 +119,31 @@ module.exports = async (payload) =>
     notification. Each key has a value that can be either static or use one or
     more available tags. Each tag is populated directly from the Gitlab event.
 
-    First, the template file content is loaded in-memory so each tag can be
-    replaced to a directly related value defined at the "event" (the object
-    created earlier with relevant Gitlab's event data).
+        (1) the template file content is loaded in-memory so each tag can be
+        replaced to a directly related value defined at the "event" (the object
+        created earlier with relevant Gitlab's event data);
 
-    Second, the processed template content (which is a YAML-formatted document)
-    is parsed to a JS object.
+        (2) the processed template content (which is a YAML-formatted document)
+        is parsed to a JS object;
 
-    Third and finally, the JS object is stringified to a JSON document, which
-    is then returned and made available here.
+        (3) the JS object is stringified to a JSON document, which is then
+        returned and made available here.
 
     The document structure follows what the Slack API expect. Roughly speaking,
     the JSON document we made is a single message attachment in Slack.
 
     Information on Slack's attachment structure can be found here:
     <https://api.slack.com/docs/message-attachments>
+
+    ---
+
+    A null response could either means:
+
+        (1) that the template file could not be found;
+        (2) that the template file could not be read;
+        (3) that the YAML is malformed.
+
+    In one or more cases, an exception will be thrown.
     */
     const message = await templateEngine.render(event, template);
     if (!message)
