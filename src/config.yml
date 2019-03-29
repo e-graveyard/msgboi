@@ -1,8 +1,36 @@
 ---
 
+event:
+  pipeline:
+    success:
+      notify: true
+      template: pipeline
+    failed:
+      notify: true
+      template: pipeline
+  merge_request:
+    opened:
+      notify: true
+      template: merge
+    merged:
+      notify: true
+      template: merge
+
+slack:
+  master:
+    hook: "hook1"
+  staging:
+    hook: "hook2"
+  dev:
+    hook: "hook3"
+
 notification:
-  rules:
-    master:
-      - Channel One
-      - Channel Two
-    staging: Channel Three
+  rule:
+    branch:
+      master:
+        - master
+        - dev
+      staging:
+        - staging
+      dev:
+        - dev
