@@ -1,36 +1,33 @@
 ---
 
+vars:
+  - &master  "hook"
+  - &staging "hook"
+  - &dev     "hook"
+
+  - &pipe
+    notify: true
+    template: pipeline
+
+  - &mr
+    notify: true
+    template: merge
+
 event:
   pipeline:
-    success:
-      notify: true
-      template: pipeline
-    failed:
-      notify: true
-      template: pipeline
+    success: *pipe
+    failed:  *pipe
   merge_request:
-    opened:
-      notify: true
-      template: merge
-    merged:
-      notify: true
-      template: merge
-
-slack:
-  master:
-    hook: "hook1"
-  staging:
-    hook: "hook2"
-  dev:
-    hook: "hook3"
+    opened: *mr
+    merged: *mr
 
 notification:
   rule:
     branch:
       master:
-        - master
-        - dev
+        - *master
+        - *dev
       staging:
-        - staging
+        - *staging
       dev:
-        - dev
+        - *dev
