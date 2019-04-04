@@ -19,5 +19,9 @@
   "dependencies": {
     "js-yaml": "^3.13.0",
     "mustache": "^3.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "jsdoc": "^3.5.5"
   }
 }
