@@ -54,4 +54,4 @@ module.exports = {
     isReady:  isReady,
     fromJSON: fromJSON,
     fromYAML: fromYAML,
-}
+};

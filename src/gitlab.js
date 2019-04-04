@@ -13,17 +13,14 @@ function toUnixTime(timestamp)
 function getStatusSymbol(status)
 {
     switch (status) {
-        case 'success':
-            return ':heavy_check_mark:';
-            break;
+    case 'success':
+        return ':heavy_check_mark:';
 
-        case 'failed':
-            return ':x:';
-            break;
+    case 'failed':
+        return ':x:';
 
-        case 'skipped':
-            return ':grey_exclamation:';
-            break;
+    case 'skipped':
+        return ':grey_exclamation:';
     }
 }
 
@@ -34,13 +31,11 @@ function getStatusSymbol(status)
 function getStatusColor(status)
 {
     switch (status) {
-        case 'success':
-            return '#36a64f';
-            break;
+    case 'success':
+        return '#36a64f';
 
-        case 'failed':
-            return '#d40e0d';
-            break;
+    case 'failed':
+        return '#d40e0d';
     }
 }
 
@@ -64,7 +59,7 @@ function getFailedStage(stages)
  */
 function drawStagesStatus(stages)
 {
-    let statusf = "";
+    let statusf = '';
 
     stages.map((stage) => {
         statusf = statusf
@@ -171,13 +166,13 @@ function getPipelineInfo(e)
         message: e.commit.message,
         author:  e.commit.author.name,
         email:   e.commit.author.email,
-    }
+    };
 
     m.decor = {};
     m.decor.stage_status = (
         oattr.status === 'success'
-        ? `${oattr.detailed_status} in ${m.pipe.stages.count} stages`
-        : `${oattr.detailed_status} at stage \'${getFailedStage(stages)}\'`
+            ? `${oattr.detailed_status} in ${m.pipe.stages.count} stages`
+            : `${oattr.detailed_status} at stage '${getFailedStage(stages)}'`
     );
 
     return m;
