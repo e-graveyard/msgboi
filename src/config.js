@@ -4,7 +4,7 @@ const file = require('./file');
 /**
     --- TODO: docs ---
  */
-module.exports = () =>
+function load()
 {
     const name = process.env.MSGBOI_CONFIG || 'config.yml';
 
@@ -21,3 +21,11 @@ module.exports = () =>
         }
     })();
 }
+
+
+/**
+    --- TODO: docs ---
+ */
+module.exports = {
+    load: load,
+};
