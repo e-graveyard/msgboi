@@ -20,18 +20,39 @@ For more information, please see
 
 const http = require('http');
 
-const config = require('./config');
-const msgboi = require('./msgboi');
+const msgboi = require('./msgboi/main');
+const logger = require('./msgboi/logger');
+const config = require('./msgboi/config');
 
 
 /**
     --- TODO: docs ---
  */
-async function handler(req, res)
+async function exitGracefully()
+{
+    logger.info('closing server');
+
+    await server.close(() => {
+        logger.info('exiting...');
+        process.exit(0);
+    });
+}
+
+
+process.on('SIGINT',  exitGracefully);
+process.on('SIGHUP',  exitGracefully);
+process.on('SIGQUIT', exitGracefully);
+process.on('SIGTERM', exitGracefully);
+
+
+/**
+    --- TODO: docs ---
+ */
+const server = http.createServer((req, res) =>
 {
     function reply(code)
     {
-        res.writeHead(code)
+        res.writeHead(code);
         res.end();
     }
 
@@ -41,28 +62,36 @@ async function handler(req, res)
         req.connection.destroy();
     }
 
-    if (req.url !== '/')
+    if (req.url !== '/') {
         die(404);
+    }
 
-    if (req.method !== 'POST')
+    if (req.method !== 'POST') {
         die(405);
+    }
 
-    if (req.headers['content-type'] !== 'application/json')
+    if (req.headers['content-type'] !== 'application/json') {
         die(415);
+    }
 
     let data = '';
     req.on('data', (d) => {
         data += d;
-        if (data.length > 1e6)
+        if (data.length > 1e6) {
             die(413);
+        }
     });
 
-    req.on('end', () => {
-        if (data.length === 0)
+    req.on('end', async () => {
+        if (data.length === 0) {
             die(400);
+        }
 
         reply(await msgboi.deal(data));
     });
-}
+});
 
-http.createServer(handler).listen(8080);
+// --------------------------------------------------
+const port = process.env.MSGBOI_PORT || 8080;
+
+server.listen(port);
