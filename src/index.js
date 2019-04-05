@@ -28,7 +28,7 @@ const MsgboiError = require('./error');
 /**
     --- TODO: docs ---
  */
-module.exports = async (payload) =>
+async function deal(payload)
 {
     /*
     The data received must be a valid JSON document from GitLab. If the data
@@ -39,13 +39,13 @@ module.exports = async (payload) =>
     specific keys: "object_kind" and "object_attributes". If these keys are
     undefined, the payload is probably malformed.
     */
-    const request = await (() => {
+    const data = await (() => {
         try {
-            const data = JSON.parse(payload);
-            if (!(data.object_kind && data.object_attributes))
+            const d = JSON.parse(payload);
+            if (!(d.object_kind && d.object_attributes))
                 throw new MsgboiError(400, 'Unable to identify the event kind');
 
-            return data;
+            return d;
         }
         catch (e) {
             console.log(e);
@@ -62,12 +62,19 @@ module.exports = async (payload) =>
     wrong reading and/or parsing the file, a null value will be returned,
     throwing a MsgboiError exception.
     */
-    const config = await require('./config')();
-    if (!config)
-        throw new MsgboiError(500, 'Unable to load the configurations');
+    const config = await (() => {
+        const c = require('./config');
+        if (!c)
+            throw new MsgboiError(500, 'Unable to load the configurations');
 
-    // Makes the configuration object globally available.
-    global.__config = config;
+        if (!(c.event && c.notification))
+            throw new MsgboiError(500, 'Malformed configurations');
+
+        return {
+            event: c.event,
+            notification: c.notification,
+        };
+    })();
 
     /*
     Gitlab sends a lot of data. msgboi tries to make sense out of it by
@@ -76,7 +83,7 @@ module.exports = async (payload) =>
     pipeline overall status, the commit author, the external references (URLs)
     to these resources etc
     */
-    const event = gitlab.read(request);
+    const event = gitlab.read(data);
     if (!event)
         return null;
 
@@ -93,21 +100,20 @@ module.exports = async (payload) =>
     */
     let template = '';
     switch(kind) {
-        case 'pipeline':
-            const status = event.pipe.status.state;
-            const notify = __config.event[kind][status].notify;
-            if (!notify)
-                return null;
-
-            template = __config.event[kind][status].template;
-            break;
-
-        case 'merge_request':
-            break;
-
-        default:
+    case 'pipeline':
+        const status = event.pipe.status.state;
+        const notify = config.event[kind][status].notify;
+        if (!notify)
             return null;
-            break;
+
+        template = config.event[kind][status].template;
+        break;
+
+    case 'merge_request':
+        break;
+
+    default:
+        return null;
     }
 
     // If the template file is undefined for status X of event Y, use the event
@@ -147,7 +153,13 @@ module.exports = async (payload) =>
     */
     const message = await templateEngine.render(event, template);
     if (!message)
-        throw new MsgboiError(500, 'Unable to generate the message');
-
-    return message;
+        throw new MsgboiError(500, 'Unable to generate the Slack notification');
 }
+
+
+/**
+    --- TODO: docs ---
+ */
+module.exports = {
+    deal: deal,
+};
