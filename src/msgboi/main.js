@@ -42,14 +42,14 @@ async function deal(payload)
     const data = await (() => {
         try {
             const d = JSON.parse(payload);
+
             if (!(d.object_kind && d.object_attributes))
-                throw new MsgboiError(400, 'Unable to identify the event kind');
+                throw new MsgboiError(400, 'unable to identify the event kind');
 
             return d;
         }
         catch (e) {
-            console.log(e);
-            throw new MsgboiError(400, 'Unable to parse the received POST data');
+            throw new MsgboiError(400, 'unable to parse the received POST data');
         }
     })();
 
@@ -65,10 +65,10 @@ async function deal(payload)
     const config = await (() => {
         const c = require('./config');
         if (!c)
-            throw new MsgboiError(500, 'Unable to load the configurations');
+            throw new MsgboiError(500, 'unable to load the configurations');
 
         if (!(c.event && c.notification))
-            throw new MsgboiError(500, 'Malformed configurations');
+            throw new MsgboiError(500, 'malformed configurations');
 
         return {
             event: c.event,
@@ -153,7 +153,7 @@ async function deal(payload)
     */
     const message = await templateEngine.render(event, template);
     if (!message)
-        throw new MsgboiError(500, 'Unable to generate the Slack notification');
+        throw new MsgboiError(500, 'unable to generate the Slack notification');
 }
 
 
