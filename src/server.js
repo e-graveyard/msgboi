@@ -56,11 +56,7 @@ async function deal(data)
         return await msgboi.deal(data);
     }
     catch (e) {
-        return {
-            code: e.code,
-            success: e.success,
-            message: e.message,
-        };
+        return e.content;
     }
 }
 
