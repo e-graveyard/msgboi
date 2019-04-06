@@ -9,4 +9,4 @@ module.exports = class MsgboiError extends Error
         this.code = code;
         this.message = message;
     }
-}
+};

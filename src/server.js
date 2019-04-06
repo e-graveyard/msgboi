@@ -24,6 +24,11 @@ const msgboi = require('./msgboi/main');
 const logger = require('./msgboi/logger');
 const config = require('./msgboi/config');
 
+process.on('SIGINT',  exitGracefully);
+process.on('SIGHUP',  exitGracefully);
+process.on('SIGQUIT', exitGracefully);
+process.on('SIGTERM', exitGracefully);
+
 logger.info('msgboi has started');
 
 
@@ -42,10 +47,22 @@ async function exitGracefully()
 }
 
 
-process.on('SIGINT',  exitGracefully);
-process.on('SIGHUP',  exitGracefully);
-process.on('SIGQUIT', exitGracefully);
-process.on('SIGTERM', exitGracefully);
+/**
+    --- TODO: docs ---
+ */
+async function deal(data)
+{
+    try {
+        return await msgboi.deal(data);
+    }
+    catch (e) {
+        return {
+            code: e.code,
+            success: e.success,
+            message: e.message,
+        };
+    }
+}
 
 
 /**
@@ -85,7 +102,13 @@ const server = http.createServer((req, res) =>
                 logger.error(`(${r}) sended too much data`);
             }
             else {
-                code = await msgboi.deal(data);
+                const result = await deal(data);
+                if (result.code < 400)
+                    logger.success(result.message);
+                else
+                    logger.error(result.message);
+
+                code = result.code;
             }
         });
     }
