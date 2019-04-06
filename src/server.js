@@ -24,12 +24,15 @@ const msgboi = require('./msgboi/main');
 const logger = require('./msgboi/logger');
 const config = require('./msgboi/config');
 
+logger.info('msgboi has started');
+
 
 /**
     --- TODO: docs ---
  */
 async function exitGracefully()
 {
+    logger.warn('got SIGNAL');
     logger.info('closing server');
 
     await server.close(() => {
@@ -50,48 +53,54 @@ process.on('SIGTERM', exitGracefully);
  */
 const server = http.createServer((req, res) =>
 {
-    function reply(code)
-    {
-        res.writeHead(code);
-        res.end();
-    }
-
-    function die(code)
-    {
-        reply(code);
-        req.connection.destroy();
-    }
+    const r = req.connection.remoteAddress;
+    let code = 200;
+    let data = [];
 
     if (req.url !== '/') {
-        die(404);
+        code = 404;
+        logger.error(`(${r}) requested "${req.url}"`);
     }
 
-    if (req.method !== 'POST') {
-        die(405);
+    else if (req.method !== 'POST') {
+        code = 405;
+        logger.error(`(${r}) called with "${req.method}"`);
     }
 
-    if (req.headers['content-type'] !== 'application/json') {
-        die(415);
+    else if (req.headers['content-type'] !== 'application/json') {
+        code = 415;
+        logger.error(`(${r}) used type "${req.headers['content-type']}"`);
     }
 
-    let data = '';
-    req.on('data', (d) => {
-        data += d;
-        if (data.length > 1e6) {
-            die(413);
-        }
-    });
+    else {
+        req.on('data', (d) => {
+            data.push(d);
+        });
 
-    req.on('end', async () => {
-        if (data.length === 0) {
-            die(400);
-        }
+        req.on('end', async () => {
+            data = Buffer.concat(data).toString();
 
-        reply(await msgboi.deal(data));
-    });
+            if (data.length > 1e6) {
+                code = 413;
+                logger.error(`(${r}) sended too much data`);
+            }
+            else {
+                code = await msgboi.deal(data);
+            }
+        });
+    }
+
+    res.statusCode = code;
+    res.end();
+
+    req.connection.destroy();
 });
 
 // --------------------------------------------------
-const port = process.env.MSGBOI_PORT || 8080;
 
-server.listen(port);
+const port = process.env.MSGBOI_PORT || 8080;
+const host = process.env.MSGBOI_HOST || 'localhost';
+
+server.listen(port, host, () => {
+    logger.info(`listening on port ${port}`);
+});
