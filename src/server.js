@@ -67,52 +67,57 @@ async function deal(data)
 const server = http.createServer((req, res) =>
 {
     const r = req.connection.remoteAddress;
+    let body = [];
     let code = 200;
-    let data = [];
 
-    if (req.url !== '/') {
-        code = 404;
-        logger.error(`(${r}) requested "${req.url}"`);
-    }
+    req.on('data', (d) => {
+        body.push(d);
 
-    else if (req.method !== 'POST') {
-        code = 405;
-        logger.error(`(${r}) called with "${req.method}"`);
-    }
+        if (body.length > 1e6) {
+            req.connection.destroy();
+        }
+    });
 
-    else if (req.headers['content-type'] !== 'application/json') {
-        code = 415;
-        logger.error(`(${r}) used type "${req.headers['content-type']}"`);
-    }
+    req.on('end', async () => {
+        if (code === 200) {
+            body = Buffer.concat(body).toString();
+            if (body.length) {
+                const result = await deal(body);
 
-    else {
-        req.on('data', (d) => {
-            data.push(d);
-        });
-
-        req.on('end', async () => {
-            data = Buffer.concat(data).toString();
-
-            if (data.length > 1e6) {
-                code = 413;
-                logger.error(`(${r}) sended too much data`);
-            }
-            else {
-                const result = await deal(data);
-                if (result.code < 400)
-                    logger.success(result.message);
-                else
-                    logger.error(result.message);
+                const log = `(${r}) ${result.message}`;
+                if (result.code < 400) {
+                    logger.success(log);
+                }
+                else {
+                    logger.error(log);
+                }
 
                 code = result.code;
             }
-        });
+            else {
+                logger.error(`(${r}) send no content`);
+                code = 400;
+            }
+        }
+
+        res.statusCode = code;
+        res.end();
+    });
+
+    if (req.url !== '/') {
+        logger.error(`(${r}) requested "${req.url}"`);
+        code = 404;
     }
 
-    res.statusCode = code;
-    res.end();
+    else if (req.method !== 'POST') {
+        logger.error(`(${r}) called with "${req.method}"`);
+        code = 405;
+    }
 
-    req.connection.destroy();
+    else if (req.headers['content-type'] !== 'application/json') {
+        logger.error(`(${r}) used type "${req.headers['content-type']}"`);
+        code = 415;
+    }
 });
 
 // --------------------------------------------------
