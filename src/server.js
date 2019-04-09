@@ -19,6 +19,8 @@ For more information, please see
 */
 
 let server = null;
+let sockets = new Set();
+let openedSocketsCounter = 0;
 
 const http = require('http');
 
@@ -39,14 +41,16 @@ logger.info('msgboi has started');
 /**
     --- TODO: docs ---
  */
-async function exitGracefully()
+function exitGracefully()
 {
     if (server) {
         logger.warn('got SIGNAL');
         logger.info('closing server');
 
-        await server.close(() => {
-            logger.info('exiting...');
+        for (const s of sockets.values())
+            s.destroy();
+
+        server.close(() => {
             process.exit(0);
         });
     }
@@ -122,6 +126,14 @@ async function loadService(setting)
             logger.error(`(${r}) used type "${req.headers['content-type']}"`);
             code = 415;
         }
+    });
+
+    server.on('connection', (s) => {
+        sockets.add(s);
+
+        s.on('close', () => {
+            sockets.delete(s);
+        });
     });
 
     server.listen(setting.port, setting.host, () => {
