@@ -14,7 +14,7 @@ function render(content, templateFile)
 
     return (async () => {
         try {
-            templateFile = `./templates/${templateFile}.yml`;
+            templateFile = `./msgboi/templates/${templateFile}.yml`;
             if (!file.isReady(templateFile))
                 return null;
 
@@ -38,4 +38,4 @@ function render(content, templateFile)
  */
 module.exports = {
     render: render,
-}
+};
