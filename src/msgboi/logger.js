@@ -86,7 +86,7 @@ function compose(criticality, message, error = undefined)
  */
 module.exports = {
     info:    (m) => { console.info(compose('INFO', m)); },
-    error:   (m) => { console.error(compose('ERROR', m)); },
     warn:    (m) => { console.warn(compose('WARNING', m)); },
     success: (m) => { console.log(compose('SUCCESS', m)); },
+    error:   (m, e = undefined) => { console.error(compose('ERROR', m, e)); },
 };
