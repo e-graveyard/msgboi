@@ -123,6 +123,11 @@ async function handle(c, d)
     const message = await templateEngine.render(event, template);
     if (!message)
         throw new MsgboiError(500, 'unable to generate the Slack notification');
+
+    return {
+        code: 200,
+        message: 'ok',
+    };
 }
 
 
