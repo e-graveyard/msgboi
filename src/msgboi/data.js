@@ -11,7 +11,6 @@ function fromJSON(data)
             return JSON.parse(data);
         }
         catch (e) {
-            console.log(e);
             return null;
         }
     })();
@@ -28,7 +27,6 @@ function fromYAML(data)
             return YAML.safeLoad(data);
         }
         catch (e) {
-            console.log(e);
             return null;
         }
     })();
@@ -41,4 +39,4 @@ function fromYAML(data)
 module.exports = {
     fromJSON: fromJSON,
     fromYAML: fromYAML
-}
+};
