@@ -18,11 +18,15 @@ For more information, please see
 <http://creativecommons.org/publicdomain/zero/1.0/>
 */
 
+let server = null;
+
 const http = require('http');
 
 const msgboi = require('./msgboi/main');
 const logger = require('./msgboi/logger');
 const config = require('./msgboi/config');
+
+global.MsgboiError = require('./msgboi/error');
 
 process.on('SIGINT',  exitGracefully);
 process.on('SIGHUP',  exitGracefully);
@@ -37,23 +41,22 @@ logger.info('msgboi has started');
  */
 async function exitGracefully()
 {
-    logger.warn('got SIGNAL');
-    logger.info('closing server');
+    if (server) {
+        logger.warn('got SIGNAL');
+        logger.info('closing server');
 
-    await server.close(() => {
-        logger.info('exiting...');
-        process.exit(0);
-    });
+        await server.close(() => {
+            logger.info('exiting...');
+            process.exit(0);
+        });
+    }
 }
 
 
-/**
-    --- TODO: docs ---
- */
-async function deal(data)
+async function handle(c, d)
 {
     try {
-        return await msgboi.deal(data);
+        return await msgboi.handle(c, d);
     }
     catch (e) {
         return e.content;
@@ -64,67 +67,87 @@ async function deal(data)
 /**
     --- TODO: docs ---
  */
-const server = http.createServer((req, res) =>
+async function loadService(setting)
 {
-    const r = req.connection.remoteAddress;
-    let body = [];
-    let code = 200;
+    server = http.createServer((req, res) => {
+        const r = req.connection.remoteAddress;
+        let body = [];
+        let code = 200;
 
-    req.on('data', (d) => {
-        body.push(d);
+        req.on('data', (d) => {
+            body.push(d);
 
-        if (body.length > 1e6) {
-            req.connection.destroy();
-        }
-    });
+            if (body.length > 1e6) {
+                req.connection.destroy();
+            }
+        });
 
-    req.on('end', async () => {
-        if (code === 200) {
-            body = Buffer.concat(body).toString();
-            if (body.length) {
-                const result = await deal(body);
+        req.on('end', async () => {
+            if (code === 200) {
+                body = Buffer.concat(body).toString();
+                if (body.length) {
+                    const result = await handle(setting.config, body);
 
-                const log = `(${r}) ${result.message}`;
-                if (result.code < 400) {
-                    logger.success(log);
+                    const log = `(${r}) ${result.message}`;
+                    if (result.code < 400) {
+                        logger.success(log);
+                    }
+                    else {
+                        logger.error(log);
+                    }
+
+                    code = result.code;
                 }
                 else {
-                    logger.error(log);
+                    logger.error(`(${r}) send no content`);
+                    code = 400;
                 }
+            }
 
-                code = result.code;
-            }
-            else {
-                logger.error(`(${r}) send no content`);
-                code = 400;
-            }
+            res.statusCode = code;
+            res.end();
+        });
+
+        if (req.url !== '/') {
+            logger.error(`(${r}) requested "${req.url}"`);
+            code = 404;
         }
 
-        res.statusCode = code;
-        res.end();
+        else if (req.method !== 'POST') {
+            logger.error(`(${r}) called with "${req.method}"`);
+            code = 405;
+        }
+
+        else if (req.headers['content-type'] !== 'application/json') {
+            logger.error(`(${r}) used type "${req.headers['content-type']}"`);
+            code = 415;
+        }
     });
 
-    if (req.url !== '/') {
-        logger.error(`(${r}) requested "${req.url}"`);
-        code = 404;
+    server.listen(setting.port, setting.host, () => {
+        logger.info(`listening on port ${setting.port}`);
+    });
+}
+
+
+/**
+    --- TODO: docs ---
+ */
+(async () =>
+{
+    const port = process.env.MSGBOI_PORT || 8080;
+    const host = process.env.MSGBOI_HOST || 'localhost';
+
+    try {
+        loadService({
+            port: port,
+            host: host,
+            config: await config.load(),
+        });
     }
-
-    else if (req.method !== 'POST') {
-        logger.error(`(${r}) called with "${req.method}"`);
-        code = 405;
+    catch (e) {
+        logger.error(e.content.message);
+        logger.info('exiting...');
+        process.exit(1);
     }
-
-    else if (req.headers['content-type'] !== 'application/json') {
-        logger.error(`(${r}) used type "${req.headers['content-type']}"`);
-        code = 415;
-    }
-});
-
-// --------------------------------------------------
-
-const port = process.env.MSGBOI_PORT || 8080;
-const host = process.env.MSGBOI_HOST || 'localhost';
-
-server.listen(port, host, () => {
-    logger.info(`listening on port ${port}`);
-});
+})();
