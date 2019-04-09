@@ -12,7 +12,6 @@ function read(file)
             return fs.readFileSync(file, 'utf8');
         }
         catch (e) {
-            console.log(e);
             return null;
         }
     })();
