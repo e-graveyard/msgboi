@@ -18,17 +18,16 @@ For more information, please see
 <http://creativecommons.org/publicdomain/zero/1.0/>
 */
 
+const data = require('./data');
 const slack = require('./slack');
 const gitlab = require('./gitlab');
 const templateEngine = require('./template');
-
-const MsgboiError = require('./error');
 
 
 /**
     --- TODO: docs ---
  */
-async function deal(payload)
+async function handle(c, d)
 {
     /*
     The data received must be a valid JSON document from GitLab. If the data
@@ -39,42 +38,12 @@ async function deal(payload)
     specific keys: "object_kind" and "object_attributes". If these keys are
     undefined, the payload is probably malformed.
     */
-    const data = await (() => {
-        try {
-            const d = JSON.parse(payload);
+    const payload = data.fromJSON(d);
+    if (!payload)
+        throw new MsgboiError(400, 'unable to parse the received POST data');
 
-            if (!(d.object_kind && d.object_attributes))
-                throw new MsgboiError(400, 'unable to identify the event kind');
-
-            return d;
-        }
-        catch (e) {
-            throw new MsgboiError(400, 'unable to parse the received POST data');
-        }
-    })();
-
-    /*
-    msgboi reads the "MSGBOI_CONFIG" environment variable expecting a filename.
-    If the variable is set, it tries to read the file. If it's not, it
-    fallbacks to the default config filename "config.yml".
-
-    The configuration file is a YAML-formatted document. If something goes
-    wrong reading and/or parsing the file, a null value will be returned,
-    throwing a MsgboiError exception.
-    */
-    const config = await (() => {
-        const c = require('./config');
-        if (!c)
-            throw new MsgboiError(500, 'unable to load the configurations');
-
-        if (!(c.event && c.notification))
-            throw new MsgboiError(500, 'malformed configurations');
-
-        return {
-            event: c.event,
-            notification: c.notification,
-        };
-    })();
+    if (!(payload.object_kind && payload.object_attributes))
+        throw new MsgboiError(400, 'unable to identify the event kind');
 
     /*
     Gitlab sends a lot of data. msgboi tries to make sense out of it by
@@ -83,7 +52,7 @@ async function deal(payload)
     pipeline overall status, the commit author, the external references (URLs)
     to these resources etc
     */
-    const event = gitlab.read(data);
+    const event = gitlab.read(payload);
     if (!event)
         return null;
 
@@ -102,11 +71,11 @@ async function deal(payload)
     switch(kind) {
     case 'pipeline':
         const status = event.pipe.status.state;
-        const notify = config.event[kind][status].notify;
+        const notify = c.event[kind][status].notify;
         if (!notify)
             return null;
 
-        template = config.event[kind][status].template;
+        template = c.event[kind][status].template;
         break;
 
     case 'merge_request':
@@ -161,5 +130,5 @@ async function deal(payload)
     --- TODO: docs ---
  */
 module.exports = {
-    deal: deal,
+    handle: handle,
 };
