@@ -21,13 +21,27 @@ For more information, please see
 const data = require('./data');
 const slack = require('./slack');
 const gitlab = require('./gitlab');
+
 const templateEngine = require('./template');
 
 
 /**
     --- TODO: docs ---
  */
-async function handle(c, d)
+function reply(code, message, responses = undefined)
+{
+    return {
+        code: code,
+        message: message,
+        responses: responses,
+    };
+}
+
+
+/**
+    --- TODO: docs ---
+ */
+async function handle(config, postData)
 {
     /*
     The data received must be a valid JSON document from GitLab. If the data
@@ -38,12 +52,13 @@ async function handle(c, d)
     specific keys: "object_kind" and "object_attributes". If these keys are
     undefined, the payload is probably malformed.
     */
-    const payload = data.fromJSON(d);
+    const payload = data.fromJSON(postData);
+
     if (!payload)
         throw new MsgboiError(400, 'unable to parse the received POST data');
 
     if (!(payload.object_kind && payload.object_attributes))
-        throw new MsgboiError(400, 'unable to identify the event kind');
+        throw new MsgboiError(400, 'malformed POST data');
 
     /*
     Gitlab sends a lot of data. msgboi tries to make sense out of it by
@@ -53,8 +68,9 @@ async function handle(c, d)
     to these resources etc
     */
     const event = gitlab.read(payload);
+
     if (!event)
-        return null;
+        return reply(204, `unsupported event "${payload.object_kind}"; skipping..."`);
 
     const kind = event.kind;
 
@@ -67,27 +83,34 @@ async function handle(c, d)
     msgboi must guarantees that user-defined configurations will be followed
     (for instance, if a given status of an event must be notified in Slack).
     */
-    let template = '';
-    switch(kind) {
-    case 'pipeline':
-        const status = event.pipe.status.state;
-        const notify = c.event[kind][status].notify;
-        if (!notify)
-            return null;
+    let status = null;
+    let branch = null;
 
-        template = c.event[kind][status].template;
-        break;
-
-    case 'merge_request':
-        break;
-
-    default:
-        return null;
+    if (kind === 'pipeline') {
+        status = event.pipe.status.state;
+        branch = event.proj.branch.name;
     }
+
+    else if (kind === 'merge_request') {
+        status = '';
+        branch = '';
+    }
+
+    // --------------------------------------------------
+    const eventConfig = config.event[kind][status];
+
+    if (!eventConfig.notify)
+        return reply(204, `"${kind}" events are set to not be notified; skipping...`);
+
+    // --------------------------------------------------
+    const notificationTargets = config.notification.branch[branch];
+
+    if (!notificationTargets)
+        return reply(204, `no notification rule set for branch "${branch}"; skipping...`);
 
     // If the template file is undefined for status X of event Y, use the event
     // name as template name fallback.
-    template = template || kind;
+    const template = eventConfig.template || kind;
 
     /*
     A template file defines a couple of keys that translates into a Slack
@@ -121,13 +144,9 @@ async function handle(c, d)
     In one or more cases, an exception will be thrown.
     */
     const message = await templateEngine.render(event, template);
-    if (!message)
-        throw new MsgboiError(500, 'unable to generate the Slack notification');
+    const responses = await slack.notifyAll(notificationTargets, message);
 
-    return {
-        code: 200,
-        message: 'ok',
-    };
+    return reply(200, 'ok', responses);
 }
 
 
