@@ -48,12 +48,12 @@ function exitGracefully()
 {
     if (server) {
         logger.warn('got SIGNAL');
-        logger.info('closing server');
 
         for (const s of sockets.values())
             s.destroy();
 
         server.close(() => {
+            logger.info('server closed');
             process.exit(0);
         });
     }
