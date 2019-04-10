@@ -83,7 +83,7 @@ async function loadService(s)
         let body = [];
         let code = 200;
 
-        const r = req.connection.remoteAddress;
+        const u = req.connection.remoteAddress;
 
         // --------------------------------------------------
         req.on('data', (d) => {
@@ -101,10 +101,17 @@ async function loadService(s)
 
                 if (body.length) {
                     const result = await handle(s.config, body);
-                    const log = `(${r}) ${result.message}`;
+                    const log = `(${u}) ${result.message}`;
 
                     if (result.code < 400) {
                         logger.success(log);
+
+                        result.responses.map((r) => {
+                            if (r.code < 400)
+                                logger.success(`(${u}) notification to channel "${r.channel}" succeded`);
+                            else
+                                logger.error(`(${u}) notification to channel "${r.channel}" failed with code ${r.code}`);
+                        });
                     }
                     else {
                         logger.error(log, result.error);
@@ -113,7 +120,7 @@ async function loadService(s)
                     code = result.code;
                 }
                 else {
-                    logger.error(`(${r}) send no content`);
+                    logger.error(`(${u}) send no content`);
                     code = 400;
                 }
             }
@@ -124,17 +131,17 @@ async function loadService(s)
 
         // --------------------------------------------------
         if (req.url !== '/') {
-            logger.error(`(${r}) requested "${req.url}"`);
+            logger.error(`(${u}) requested "${req.url}"`);
             code = 404;
         }
 
         else if (req.method !== 'POST') {
-            logger.error(`(${r}) called with "${req.method}"`);
+            logger.error(`(${u}) called with "${req.method}"`);
             code = 405;
         }
 
         else if (req.headers['content-type'] !== 'application/json') {
-            logger.error(`(${r}) used type "${req.headers['content-type']}"`);
+            logger.error(`(${u}) used type "${req.headers['content-type']}"`);
             code = 415;
         }
     });
