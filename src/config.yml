@@ -22,12 +22,13 @@ event:
     merged: *mr
 
 notification:
-  rule:
-    branch:
-      master:
-        - *master
-        - *dev
-      staging:
-        - *staging
-      dev:
-        - *dev
+  branch:
+    master:
+      - *master
+      - *dev
+    staging:
+      - *master
+      - *dev
+      - *staging
+    dev:
+      - *dev
