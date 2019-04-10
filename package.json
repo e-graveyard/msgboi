@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack"
+    "build": "webpack",
+    "bundle:aws": "./providers/bundle.sh"
   },
   "repository": {
     "type": "git",
@@ -22,9 +23,11 @@
     "mustache": "^3.0.1"
   },
   "devDependencies": {
+    "ava": "^1.4.1",
     "eslint": "^5.16.0",
     "jsdoc": "^3.5.5",
     "nodemon": "^1.18.11",
+    "nyc": "^13.3.0",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0"
   }
