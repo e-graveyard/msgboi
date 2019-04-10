@@ -157,7 +157,7 @@ async function loadService(s)
 
     // --------------------------------------------------
     server.listen(s.port, s.host, () => {
-        logger.info(`listening on port ${s.port}`);
+        logger.info(`listening on ${s.host}:${s.port}`);
     });
 }
 
