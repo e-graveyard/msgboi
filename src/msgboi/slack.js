@@ -4,8 +4,12 @@ const https = require('https');
 /**
     --- TODO: docs ---
  */
-function notify(channel, message)
+function send(channel, message)
 {
+    const payload = JSON.stringify({
+        attachments: [message],
+    });
+
     const info = {
         hostname: 'hooks.slack.com',
         path:     `/services/${channel}`,
@@ -13,26 +17,39 @@ function notify(channel, message)
         port:     443,
         headers:  {
             'Content-Type':  'application/json',
-            'Content-Length': message.length,
+            'Content-Length': payload.length,
         }
     };
 
-    const success = (() => {
+    return new Promise((resolve, reject) => {
         const req = https.request(info, (res) => {
-            console.log(res.statusCode);
-            return res.statusCode === 200;
+            resolve({
+                channel: channel,
+                code: res.statusCode,
+            });
         });
 
-        req.on('error', (e) => {
-            console.log(e);
-            return false;
+        req.on('error', () => {
+            reject({
+                channel: channel,
+                code: 500,
+            });
         });
 
-        req.write(message);
+        req.write(payload);
         req.end();
-    })();
+    });
+}
 
-    return success;
+function notifyAll(channels, message)
+{
+    const promises = channels.map((c) => {
+        return send(c, message);
+    });
+
+    return Promise.all(promises).then((r) => {
+        return r;
+    });
 }
 
 
@@ -40,5 +57,5 @@ function notify(channel, message)
     --- TODO: docs ---
  */
 module.exports = {
-    notify: notify
-}
+    notifyAll: notifyAll,
+};
