@@ -6,7 +6,7 @@ const file = require('./file');
 
 function loadTemplate(template)
 {
-    const templateFilePath = `./msgboi/templates/${template}.yml`;
+    const templateFilePath = `./templates/${template}.yml`;
 
     if (!file.isReady(templateFilePath))
         throw new MsgboiError(500, `template "${template}" not found`);
