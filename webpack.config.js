@@ -1,7 +1,7 @@
 module.exports = {
-    entry: './src/server.js',
+    entry: './src/index.js',
     target: 'node',
     output: {
-        filename: 'bundle.js'
+        filename: 'index.js'
     },
 };
