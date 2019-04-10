@@ -1,2 +1,2 @@
 run:
-	node src/server.js
+	cd src && node server.js
