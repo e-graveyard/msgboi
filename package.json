@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,9 @@
   },
   "devDependencies": {
     "eslint": "^5.16.0",
-    "jsdoc": "^3.5.5"
+    "jsdoc": "^3.5.5",
+    "nodemon": "^1.18.11",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
   }
 }
