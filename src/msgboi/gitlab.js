@@ -199,7 +199,12 @@ function read(event)
     if (!handler.hasOwnProperty(kind))
         return null;
 
-    return handler[kind](event);
+    try {
+        return handler[kind](event);
+    }
+    catch (err) {
+        throw new MsgboiError(400, `unable to read "${kind}" event; this could also be a server error`, err);
+    }
 }
 
 
