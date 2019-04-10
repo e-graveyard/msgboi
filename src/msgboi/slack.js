@@ -41,11 +41,13 @@ function send(channel, message)
     });
 }
 
+
+/**
+    --- TODO: docs ---
+ */
 function notifyAll(channels, message)
 {
-    const promises = channels.map((c) => {
-        return send(c, message);
-    });
+    const promises = channels.map(c => send(c, message));
 
     return Promise.all(promises).then((r) => {
         return r;
