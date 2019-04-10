@@ -4,32 +4,39 @@ const data = require('./data');
 const file = require('./file');
 
 
+function loadTemplate(template)
+{
+    const templateFilePath = `./msgboi/templates/${template}.yml`;
+
+    if (!file.isReady(templateFilePath))
+        throw new MsgboiError(500, `template "${template}" not found`);
+
+    const templateContent = file.read(templateFilePath);
+
+    if (!templateContent)
+        throw new MsgboiError(500, `unable to read template "${template}"`);
+
+    return templateContent;
+}
+
+
 /**
     --- TODO: docs ---
  */
-function render(content, templateFile)
+async function render(content, templateFile)
 {
     // do not escape special character for HTML sake
     mustache.escape = ((text) => { return text; });
 
-    return (async () => {
-        try {
-            templateFile = `./msgboi/templates/${templateFile}.yml`;
-            if (!file.isReady(templateFile))
-                return null;
+    const template = await loadTemplate(templateFile);
 
-            const template = await file.read(templateFile);
-            return JSON.stringify({
-                attachments: [
-                    await data.fromYAML(mustache.render(template, content))
-                ]
-            });
-        }
-        catch (e) {
-            console.log(e);
-            return null;
-        }
-    })();
+    try {
+        const rendered = await mustache.render(template, content);
+        return await data.fromYAML(rendered);
+    }
+    catch (e) {
+        throw new MsgboiError(500, `unable to render template "${templateFile}"`);
+    }
 }
 
 
