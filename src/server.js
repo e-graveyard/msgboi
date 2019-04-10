@@ -18,9 +18,11 @@ For more information, please see
 <http://creativecommons.org/publicdomain/zero/1.0/>
 */
 
+// the HTTP server object
 let server = null;
+
+// opened sockets "table"
 let sockets = new Set();
-let openedSocketsCounter = 0;
 
 const http = require('http');
 
@@ -30,6 +32,7 @@ const config = require('./msgboi/config');
 
 global.MsgboiError = require('./msgboi/error');
 
+// signal handlers
 process.on('SIGINT',  exitGracefully);
 process.on('SIGHUP',  exitGracefully);
 process.on('SIGQUIT', exitGracefully);
@@ -57,6 +60,9 @@ function exitGracefully()
 }
 
 
+/**
+    --- TODO: docs ---
+ */
 async function handle(c, d)
 {
     try {
@@ -71,13 +77,15 @@ async function handle(c, d)
 /**
     --- TODO: docs ---
  */
-async function loadService(setting)
+async function loadService(s)
 {
     server = http.createServer((req, res) => {
-        const r = req.connection.remoteAddress;
         let body = [];
         let code = 200;
 
+        const r = req.connection.remoteAddress;
+
+        // --------------------------------------------------
         req.on('data', (d) => {
             body.push(d);
 
@@ -86,18 +94,20 @@ async function loadService(setting)
             }
         });
 
+        // --------------------------------------------------
         req.on('end', async () => {
             if (code === 200) {
                 body = Buffer.concat(body).toString();
-                if (body.length) {
-                    const result = await handle(setting.config, body);
 
+                if (body.length) {
+                    const result = await handle(s.config, body);
                     const log = `(${r}) ${result.message}`;
+
                     if (result.code < 400) {
                         logger.success(log);
                     }
                     else {
-                        logger.error(log);
+                        logger.error(log, result.error);
                     }
 
                     code = result.code;
@@ -112,6 +122,7 @@ async function loadService(setting)
             res.end();
         });
 
+        // --------------------------------------------------
         if (req.url !== '/') {
             logger.error(`(${r}) requested "${req.url}"`);
             code = 404;
@@ -128,6 +139,7 @@ async function loadService(setting)
         }
     });
 
+    // --------------------------------------------------
     server.on('connection', (s) => {
         sockets.add(s);
 
@@ -136,8 +148,9 @@ async function loadService(setting)
         });
     });
 
-    server.listen(setting.port, setting.host, () => {
-        logger.info(`listening on port ${setting.port}`);
+    // --------------------------------------------------
+    server.listen(s.port, s.host, () => {
+        logger.info(`listening on port ${s.port}`);
     });
 }
 
@@ -160,6 +173,7 @@ async function loadService(setting)
     catch (e) {
         logger.error(e.content.message);
         logger.info('exiting...');
+
         process.exit(1);
     }
 })();
