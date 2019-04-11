@@ -10,7 +10,7 @@ function toUnixTime(timestamp)
 /**
     --- TODO: docs ---
  */
-function getStatusSymbol(status)
+function pipeStatusIcon(status)
 {
     switch (status) {
     case 'success':
@@ -28,7 +28,7 @@ function getStatusSymbol(status)
 /**
     --- TODO: docs ---
  */
-function getStatusColor(status)
+function pipeStatusColor(status)
 {
     switch (status) {
     case 'success':
@@ -37,6 +37,35 @@ function getStatusColor(status)
     case 'failed':
         return '#d40e0d';
     }
+}
+
+
+/**
+    --- TODO: docs ---
+ */
+function mergeStatusArt(status)
+{
+    let color = null;
+    let icon  = null;
+
+    switch (status) {
+    case 'opened':
+        color = '#CECECE';
+        icon  = ':speech_balloon:';
+        break;
+
+    case 'merged':
+        color = '';
+        icon  = '';
+        break;
+
+    case 'closed':
+        color = '';
+        icon  = '';
+        break;
+    }
+
+    return { color, icon };
 }
 
 
@@ -63,7 +92,7 @@ function drawStagesStatus(stages)
 
     stages.map((stage) => {
         statusf = statusf
-            .concat(`(${getStatusSymbol(stage.status)}) *${stage.name}* >> `);
+            .concat(`(${pipeStatusIcon(stage.status)}) *${stage.name}* >> `);
     });
 
     return (statusf.substring(0, statusf.length - 4));
@@ -117,26 +146,99 @@ function orderStages(builds)
 /**
     --- TODO: docs ---
  */
-function getPipelineInfo(e)
+function getCommonInfo(e)
 {
     const m = {
         kind: e.object_kind,
     };
 
-    const oattr = e.object_attributes;
-    const stages = orderStages(e.builds);
-
-    // git project info
     m.proj = {
-        name:       e.project.name,
-        url:        e.project.web_url,
-        branch: {
-            name: oattr.ref,
-            url:  `${e.project.web_url}/tree/${oattr.ref}`,
+        name: e.project.name,
+        url:  e.project.web_url,
+    };
+
+    m.user = {
+        name:   e.user.name,
+        url:    `https://gitlab.com/${e.user.username}`,
+        avatar: e.user.avatar_url,
+    };
+
+    return m;
+}
+
+
+/**
+    --- TODO: docs ---
+ */
+function getMergeRequestInfo(e)
+{
+    const m = getCommonInfo(e);
+
+    const oattr = e.object_attributes;
+    const { color, icon } = mergeStatusArt(oattr.state);
+
+    // --------------------------------------------------
+    const lc = e.object_attributes.last_commit;
+    m.commit = {
+        message: lc.message,
+        author:  lc.author.name,
+        email:   lc.author.email,
+    };
+
+    // --------------------------------------------------
+    m.mr = {
+        id:      oattr.url.split('/').pop(),
+        url:     oattr.url,
+        created: toUnixTime(oattr.created_at),
+        title:   oattr.title,
+        status : {
+            state: oattr.state,
+            text:  oattr.state.toUpperCase(),
+            color: color,
+            icon:  icon,
+        },
+        source: {
+            branch : {
+                name: oattr.source_branch,
+                url:  `${e.project.web_url}/tree/${oattr.source_branch}`,
+            },
+        },
+        target : {
+            branch : {
+                name: oattr.target_branch,
+                url:  `${e.project.web_url}/tree/${oattr.target_branch}`,
+            },
         },
     };
 
-    // pipeline info
+    return m;
+}
+
+
+/**
+    --- TODO: docs ---
+ */
+function getPipelineInfo(e)
+{
+    const m = getCommonInfo(e);
+
+    const oattr = e.object_attributes;
+    const stages = orderStages(e.builds);
+
+    // --------------------------------------------------
+    m.commit = {
+        message: e.commit.message,
+        author:  e.commit.author.name,
+        email:   e.commit.author.email,
+    };
+
+    // --------------------------------------------------
+    m.proj.branch = {
+        name: oattr.ref,
+        url:  `${e.project.web_url}/tree/${oattr.ref}`,
+    };
+
+    // --------------------------------------------------
     m.pipe = {
         id:       oattr.id,
         url:      `${m.proj.url}/pipelines/${oattr.id}`,
@@ -145,8 +247,8 @@ function getPipelineInfo(e)
         status: {
             state: oattr.status,
             text:  oattr.detailed_status.toUpperCase(),
-            icon:  getStatusSymbol(oattr.status),
-            color: getStatusColor(oattr.status),
+            icon:  pipeStatusIcon(oattr.status),
+            color: pipeStatusColor(oattr.status),
         },
         stages: {
             repr:  drawStagesStatus(stages),
@@ -154,20 +256,7 @@ function getPipelineInfo(e)
         }
     };
 
-    // event author
-    m.user = {
-        name:   e.user.name,
-        url:    `https://gitlab.com/${e.user.username}`,
-        avatar: e.user.avatar_url,
-    };
-
-    // commit author
-    m.commit = {
-        message: e.commit.message,
-        author:  e.commit.author.name,
-        email:   e.commit.author.email,
-    };
-
+    // --------------------------------------------------
     m.decor = {};
     m.decor.stage_status = (
         oattr.status === 'success'
@@ -182,12 +271,6 @@ function getPipelineInfo(e)
 /**
     --- TODO: docs ---
  */
-function getMergeRequestInfo(e) {}
-
-
-/**
-    --- TODO: docs ---
- */
 function read(event)
 {
     const kind = event.object_kind;
@@ -197,7 +280,7 @@ function read(event)
     };
 
     if (!handler.hasOwnProperty(kind))
-        return null;
+        throw new MsgboiError(204, `unsupported event "${kind}"; skipping..."`);
 
     try {
         return handler[kind](event);
