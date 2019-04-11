@@ -2,10 +2,13 @@ FROM node:10.15.3-alpine AS base
 MAINTAINER Caian R. Ertl <hi@caian.org>
 WORKDIR /usr/msgboi
 
-FROM base AS build
+FROM base AS deps
+COPY ["package.json", "package-lock.json", "./"]
+RUN npm install
+
+FROM deps AS build
 COPY . .
 RUN cp providers/server/index.js src/
-RUN npm install
 RUN npm run build
 
 FROM base AS run
