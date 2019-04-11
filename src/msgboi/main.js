@@ -28,19 +28,6 @@ const templateEngine = require('./template');
 /**
     --- TODO: docs ---
  */
-function reply(code, message, responses = undefined)
-{
-    return {
-        code: code,
-        message: message,
-        responses: responses,
-    };
-}
-
-
-/**
-    --- TODO: docs ---
- */
 async function handle(config, postData)
 {
     /*
@@ -68,11 +55,7 @@ async function handle(config, postData)
     to these resources etc
     */
     const event = gitlab.read(payload);
-
-    if (!event)
-        return reply(204, `unsupported event "${payload.object_kind}"; skipping..."`);
-
-    const kind = event.kind;
+    const kind  = event.kind;
 
     /*
     Two kinds of events can be handled: pipeline events and merge request
@@ -92,21 +75,21 @@ async function handle(config, postData)
     }
 
     else if (kind === 'merge_request') {
-        status = '';
-        branch = '';
+        status = event.mr.status.state;
+        branch = event.mr.target.branch.name;
     }
 
     // --------------------------------------------------
     const eventConfig = config.event[kind][status];
 
     if (!eventConfig.notify)
-        return reply(204, `"${kind}" events are set to not be notified; skipping...`);
+        throw new MsgboiError(204, `"${kind}" events are set to not be notified; skipping...`);
 
     // --------------------------------------------------
     const notificationTargets = config.notification.branch[branch];
 
     if (!notificationTargets)
-        return reply(204, `no notification rule set for branch "${branch}"; skipping...`);
+        throw new MsgboiError(204, `no notification rule set for branch "${branch}"; skipping...`);
 
     // If the template file is undefined for status X of event Y, use the event
     // name as template name fallback.
@@ -144,9 +127,12 @@ async function handle(config, postData)
     In one or more cases, an exception will be thrown.
     */
     const message = await templateEngine.render(event, template);
-    const responses = await slack.notifyAll(notificationTargets, message);
 
-    return reply(200, 'ok', responses);
+    return {
+        code: 200,
+        message: 'ok',
+        responses: await slack.notifyAll(notificationTargets, message),
+    };
 }
 
 
