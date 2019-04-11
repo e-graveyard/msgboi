@@ -1,0 +1,184 @@
+
+{
+    "object_kind": "pipeline",
+    "object_attributes": {
+        "id": 63247041,
+        "ref": "dev",
+        "tag": false,
+        "sha": "170bcdf46c6ee41446d15233eace482660e8dcd5",
+        "before_sha": "98682d3dbf9cbb5a432c97992c173bbfce6079b9",
+        "status": "success",
+        "detailed_status": "passed",
+        "stages": [
+            "compile",
+            "test",
+            "build",
+            "push"
+        ],
+        "created_at": "2019-04-11 19:41:38 UTC",
+        "finished_at": "2019-04-11 19:46:06 UTC",
+        "duration": 264,
+        "variables": []
+    },
+    "user": {
+        "name": "Caian Ertl",
+        "username": "caian.ertl",
+        "avatar_url": "https://secure.gravatar.com/avatar/70c4f3811791c8539f97fe6e305b3384?s=80&d=identicon"
+    },
+    "project": {
+        "id": 11335902,
+        "name": "rest-api",
+        "description": "",
+        "web_url": "https://gitlab.com/caian.ertl/rest-api",
+        "avatar_url": null,
+        "git_ssh_url": "git@gitlab.com:caian.ertl/rest-api.git",
+        "git_http_url": "https://gitlab.com/caian.ertl/rest-api.git",
+        "namespace": "caian.ertl",
+        "visibility_level": 0,
+        "path_with_namespace": "caian.ertl/rest-api",
+        "default_branch": "master",
+        "ci_config_path": null
+    },
+    "commit": {
+        "id": "170bcdf46c6ff41446d15233eace482770e8dcd5",
+        "message": "Merge branch 'feat-healthcheck-route' into 'dev'\n\nHealth Check route feature\n\nSee merge request caian.ertl/rest-api!7",
+        "timestamp": "2019-04-11T19:41:37Z",
+        "url": "https://gitlab.com/caian.ertl/rest-api/commit/201bcdf46c6ff41556d15233eabe482330e8dcd7",
+        "author": {
+            "name": "Caian Ertl",
+            "email": "hi@caian.org"
+        }
+    },
+    "builds": [
+        {
+            "id": 777905114,
+            "stage": "push",
+            "name": "push",
+            "status": "success",
+            "created_at": "2019-04-11 19:41:38 UTC",
+            "started_at": "2019-04-11 19:45:14 UTC",
+            "finished_at": "2019-04-11 19:46:06 UTC",
+            "when": "on_success",
+            "manual": false,
+            "user": {
+                "name": "Caian Ertl",
+                "username": "caian.ertl",
+                "avatar_url": "https://secure.gravatar.com/avatar/70c4f3811791c8539f97fe6e305b3384?s=80&d=identicon"
+            },
+            "runner": {
+                "id": 380986,
+                "description": "shared-runners-manager-5.gitlab.com",
+                "active": true,
+                "is_shared": true
+            },
+            "artifacts_file": {
+                "filename": null,
+                "size": 0
+            }
+        },
+        {
+            "id": 777905113,
+            "stage": "build",
+            "name": "build",
+            "status": "success",
+            "created_at": "2019-04-11 19:41:38 UTC",
+            "started_at": "2019-04-11 19:44:15 UTC",
+            "finished_at": "2019-04-11 19:45:12 UTC",
+            "when": "on_success",
+            "manual": false,
+            "user": {
+                "name": "Caian Ertl",
+                "username": "caian.ertl",
+                "avatar_url": "https://secure.gravatar.com/avatar/70c4f3811791c8539f97fe6e305b3384?s=80&d=identicon"
+            },
+            "runner": {
+                "id": 380986,
+                "description": "shared-runners-manager-5.gitlab.com",
+                "active": true,
+                "is_shared": true
+            },
+            "artifacts_file": {
+                "filename": null,
+                "size": 1886
+            }
+        },
+        {
+            "id": 777905111,
+            "stage": "test",
+            "name": "unit",
+            "status": "success",
+            "created_at": "2019-04-11 19:41:38 UTC",
+            "started_at": "2019-04-11 19:43:01 UTC",
+            "finished_at": "2019-04-11 19:44:14 UTC",
+            "when": "on_success",
+            "manual": false,
+            "user": {
+                "name": "Caian Ertl",
+                "username": "caian.ertl",
+                "avatar_url": "https://secure.gravatar.com/avatar/70c4f3811791c8539f97fe6e305b3384?s=80&d=identicon"
+            },
+            "runner": {
+                "id": 44028,
+                "description": "shared-runners-manager-3.gitlab.com",
+                "active": true,
+                "is_shared": true
+            },
+            "artifacts_file": {
+                "filename": null,
+                "size": 1934
+            }
+        },
+        {
+            "id": 777905112,
+            "stage": "test",
+            "name": "integration",
+            "status": "success",
+            "created_at": "2019-04-11 19:41:38 UTC",
+            "started_at": "2019-04-11 19:43:02 UTC",
+            "finished_at": "2019-04-11 19:43:42 UTC",
+            "when": "on_success",
+            "manual": false,
+            "user": {
+                "name": "Caian Ertl",
+                "username": "caian.ertl",
+                "avatar_url": "https://secure.gravatar.com/avatar/70c4f3811791c8539f97fe6e305b3384?s=80&d=identicon"
+            },
+            "runner": {
+                "id": 380987,
+                "description": "shared-runners-manager-6.gitlab.com",
+                "active": true,
+                "is_shared": true
+            },
+            "artifacts_file": {
+                "filename": null,
+                "size": 1946
+            }
+        },
+        {
+            "id": 777905110,
+            "stage": "compile",
+            "name": "compile",
+            "status": "success",
+            "created_at": "2019-04-11 19:41:38 UTC",
+            "started_at": "2019-04-11 19:41:39 UTC",
+            "finished_at": "2019-04-11 19:43:00 UTC",
+            "when": "on_success",
+            "manual": false,
+            "user": {
+                "name": "Caian Ertl",
+                "username": "caian.ertl",
+                "avatar_url": "https://secure.gravatar.com/avatar/70c4f3811791c8539f97fe6e305b3384?s=80&d=identicon"
+            },
+            "runner": {
+                "id": 380986,
+                "description": "shared-runners-manager-5.gitlab.com",
+                "active": true,
+                "is_shared": true
+            },
+            "artifacts_file": {
+                "filename": "artifacts.zip",
+                "size": 57666
+            }
+        }
+    ]
+}
