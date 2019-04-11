@@ -35,7 +35,7 @@ function pipeStatusColor(status)
         return '#36a64f';
 
     case 'failed':
-        return '#d40e0d';
+        return '#E63C3F';
     }
 }
 
@@ -50,18 +50,18 @@ function mergeStatusArt(status)
 
     switch (status) {
     case 'opened':
-        color = '#CECECE';
-        icon  = ':speech_balloon:';
+        color = '#FECE08';
+        icon  = ':heavy_plus_sign:';
         break;
 
     case 'merged':
-        color = '';
-        icon  = '';
+        color = '#2DA5E1';
+        icon  = ':m:';
         break;
 
     case 'closed':
-        color = '';
-        icon  = '';
+        color = '#E63C3F';
+        icon  = ':o:';
         break;
     }
 
