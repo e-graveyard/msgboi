@@ -1,0 +1,31 @@
+---
+
+title:       "GitLab Status Notification"
+fallback:    "GitLab Status Notification"
+color:       "{{mr.status.color}}"
+pretext:     "{{mr.status.icon}} Merge Request <{{mr.url}}|!{{mr.id}}> *{{mr.status.text}}* for project <{{proj.url}}|{{proj.name}}>:"
+text:        "Merge request <{{mr.url}}|{{mr.title}}> {{mr.status.state}}"
+author_name: "{{user.name}}"
+author_link: "{{user.url}}"
+author_icon: "{{user.avatar}}"
+
+fields:
+  - title: Source branch
+    value: "<{{mr.source.branch.url}}|{{mr.source.branch.name}}>"
+    short: true
+
+  - title: Target Branch
+    value: "<{{mr.target.branch.url}}|{{mr.target.branch.name}}>"
+    short: true
+
+  - title: Last commit
+    value: "```{{commit.message}}```"
+    short: false
+
+  - title: Commit author
+    value: "`{{commit.author}} <{{commit.email}}>`"
+    short: false
+
+footer: Gitlab-CI
+footer_icon: https://about.gitlab.com/images/ci/gitlab-ci-cd-logo_2x.png
+ts: "{{mr.created}}"
