@@ -27,12 +27,10 @@ global.MsgboiError = require('./msgboi/error');
 
 exports.handler = async (event, context) =>
 {
-    let c = null;
     let r = null;
 
     try {
-        c = await config.load();
-        r = await msgboi.handle(c, event.body);
+        r = await msgboi.handle(config, event.body);
     }
     catch (e) {
         r = e.content;
