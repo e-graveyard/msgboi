@@ -7,7 +7,8 @@
     "test": "ava \"**/*.test.js\"",
     "prepare": "node bin/prepare.js",
     "bundle": "webpack --verbose",
-    "bundle:aws": "./bin/bundle.sh aws"
+    "bundle:aws": "./bin/bundle.sh aws",
+    "bundle:server": "./bin/bundle.sh server"
   },
   "repository": {
     "type": "git",
@@ -29,6 +30,7 @@
     "jsdoc": "^3.5.5",
     "nodemon": "^1.18.11",
     "nyc": "^13.3.0",
+    "terser-webpack-plugin": "^1.2.3",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0"
   }
