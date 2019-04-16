@@ -18,11 +18,10 @@ For more information, please see
 <http://creativecommons.org/publicdomain/zero/1.0/>
 */
 
-const data = require('./data');
-const slack = require('./slack');
+const data   = require('./data');
+const slack  = require('./slack');
 const gitlab = require('./gitlab');
-
-const templateEngine = require('./template');
+const render = require('./render');
 
 
 /**
@@ -126,7 +125,7 @@ async function handle(config, postData)
 
     In one or more cases, an exception will be thrown.
     */
-    const message = await templateEngine.render(event, template);
+    const message = await render(template, event);
 
     return {
         code: 200,
