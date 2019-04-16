@@ -63,8 +63,11 @@ function generateTemplatesModule()
         const name = s[0];
         const ext  = s[1];
 
-        if (ext === 'yml')
-            t[name] = JSON.stringify(convert(`${templatesDir}/${f}`));
+        if (ext === 'yml') {
+            t[name] = JSON.stringify({
+                attachments: [ convert(`${templatesDir}/${f}`) ]
+            });
+        }
     });
 
     if (!Object.keys(t).length)
