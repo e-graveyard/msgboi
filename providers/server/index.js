@@ -165,22 +165,19 @@ async function loadService(s)
 /**
     --- TODO: docs ---
  */
-(async () =>
-{
-    const port = process.env.MSGBOI_PORT || 8080;
-    const host = process.env.MSGBOI_HOST || 'localhost';
+const port = process.env.MSGBOI_PORT || 8080;
+const host = process.env.MSGBOI_HOST || 'localhost';
 
-    try {
-        loadService({
-            port: port,
-            host: host,
-            config: await config.load(),
-        });
-    }
-    catch (e) {
-        logger.error(e.content.message);
-        logger.info('exiting...');
+try {
+    loadService({
+        port: port,
+        host: host,
+        config: config,
+    });
+}
+catch (e) {
+    logger.error(e.content.message);
+    logger.info('exiting...');
 
-        process.exit(1);
-    }
-})();
+    process.exit(1);
+}
