@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "ava \"**/*.test.js\"",
-    "build": "webpack --verbose",
-    "bundle:aws": "./providers/bundle.sh"
+    "prepare": "node bin/prepare.js",
+    "bundle": "webpack --verbose",
+    "bundle:aws": "./bin/bundle.sh aws"
   },
   "repository": {
     "type": "git",
