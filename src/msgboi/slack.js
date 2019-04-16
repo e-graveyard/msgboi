@@ -4,12 +4,8 @@ const https = require('https');
 /**
     --- TODO: docs ---
  */
-function send(channel, message)
+function send(channel, payload)
 {
-    const payload = JSON.stringify({
-        attachments: [message],
-    });
-
     const info = {
         hostname: 'hooks.slack.com',
         path:     `/services/${channel}`,
