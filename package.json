@@ -6,7 +6,7 @@
   "scripts": {
     "test": "ava \"**/*.test.js\"",
     "prepare": "node bin/prepare.js",
-    "bundle": "webpack --verbose",
+    "bundle": "webpack",
     "bundle:aws": "./bin/bundle.sh aws",
     "bundle:server": "./bin/bundle.sh server"
   },
