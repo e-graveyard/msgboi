@@ -1,6 +1,3 @@
-const YAML = require('js-yaml');
-
-
 /**
     --- TODO: docs ---
  */
@@ -20,23 +17,6 @@ function fromJSON(data)
 /**
     --- TODO: docs ---
  */
-function fromYAML(data)
-{
-    return (() => {
-        try {
-            return YAML.safeLoad(data);
-        }
-        catch (e) {
-            return null;
-        }
-    })();
-}
-
-
-/**
-    --- TODO: docs ---
- */
 module.exports = {
     fromJSON: fromJSON,
-    fromYAML: fromYAML
 };
