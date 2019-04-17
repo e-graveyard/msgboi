@@ -1,8 +1,5 @@
 sudo: required
 language: node_js
-node_js:
-  - "8"
-  - "10"
 
 services:
   - "docker"
@@ -16,6 +13,9 @@ jobs:
     - stage: test
       name: "Unit tests"
       install:
+        - npm install
+      script:
+        - npm test
 
     - stage: push
       name: "Push to registry"
