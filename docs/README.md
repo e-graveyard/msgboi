@@ -1,6 +1,6 @@
 # msgboi
 
-<img src="docs/logo.png" height="210px" align="right"/>
+<img src="docs/logo.svg" height="210px" align="right"/>
 
 A cloud-native microservice that sends Slack notifications from GitLab events.
 
