@@ -26,6 +26,7 @@
   },
   "devDependencies": {
     "ava": "^1.4.1",
+    "codecov": "^3.3.0",
     "eslint": "^5.16.0",
     "js-yaml": "^3.13.1",
     "jsdoc": "^3.5.5",
