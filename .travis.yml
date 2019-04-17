@@ -1,0 +1,22 @@
+sudo: required
+language: node_js
+node_js:
+  - "8"
+  - "10"
+
+services:
+  - "docker"
+
+stages:
+  - test
+  - push
+
+jobs:
+  include:
+    - stage: test
+      name: "Unit tests"
+      install:
+
+    - stage: push
+      name: "Push to registry"
+      if: tag IS present
