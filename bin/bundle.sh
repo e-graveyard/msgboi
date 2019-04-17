@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 set -e
 
@@ -6,24 +6,39 @@ clean() {
     rm -rf dist bundle
 }
 
-PROVIDER=$1
+bundle() {
+    cp -r src bundle
 
-# ...
-clean
-cp -r src bundle
+    # ...
+    cp "providers/$1/index.js" bundle
+    npm run prepare
+    npm run bundle
+}
 
-# ...
-cp "providers/$PROVIDER/index.js" bundle
-npm run prepare
-npm run bundle
+compact() {
+    # ...
+    cd dist
+    zip -r bundle.zip .
 
-# ...
-cd dist
-zip -r bundle.zip .
-
-# ...
-(
+    # ...
     cd ..
     mv dist/bundle.zip .
-    clean
-)
+}
+
+get_artifact() {
+    mv dist/index.js .
+}
+
+bundle "$1"
+
+case "$1" in
+    aws)
+        compact
+        ;;
+
+    server)
+        get_artifact
+        ;;
+esac
+
+clean
