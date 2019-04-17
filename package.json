@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "docs": "jsdoc -r src -d docs",
     "test": "ava \"**/*.test.js\"",
     "prepare": "node bin/prepare.js",
     "bundle": "webpack",
