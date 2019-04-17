@@ -8,12 +8,9 @@ RUN npm install
 
 FROM deps AS build
 COPY . .
-RUN cp providers/server/index.js src/
-RUN npm run build
+RUN npm run bundle:server
 
 FROM base AS run
 EXPOSE 8080
-COPY --from=build /usr/msgboi/dist .
-COPY --from=build /usr/msgboi/src/config.yml .
-COPY --from=build /usr/msgboi/src/templates ./templates
+COPY --from=build /usr/msgboi/index.js .
 ENTRYPOINT ["node", "index.js"]
