@@ -11,7 +11,7 @@ bundle() {
 
     # ...
     cp "providers/$1/index.js" bundle
-    npm run prepare
+    npm run gen
     npm run bundle
 }
 
