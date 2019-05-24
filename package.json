@@ -6,7 +6,7 @@
   "scripts": {
     "docs": "jsdoc -r src -d docs",
     "test": "ava \"**/*.test.js\"",
-    "prepare": "node bin/prepare.js",
+    "gen": "node bin/gen.js",
     "bundle": "webpack",
     "bundle:aws": "./bin/bundle.sh aws",
     "bundle:server": "./bin/bundle.sh server"
