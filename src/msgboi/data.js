@@ -18,5 +18,5 @@ function fromJSON(data)
     --- TODO: docs ---
  */
 module.exports = {
-    fromJSON: fromJSON,
+    fromJSON,
 };

@@ -18,6 +18,8 @@ For more information, please see
 <http://creativecommons.org/publicdomain/zero/1.0/>
 */
 
+/* global MsgboiError */
+
 const data   = require('./data');
 const slack  = require('./slack');
 const gitlab = require('./gitlab');
@@ -139,5 +141,5 @@ async function handle(config, postData)
     --- TODO: docs ---
  */
 module.exports = {
-    handle: handle,
+    handle,
 };

@@ -1,3 +1,5 @@
+/* global MsgboiError */
+
 const mustache  = require('mustache');
 const templates = require('./templates');
 
@@ -10,6 +12,7 @@ async function render(name, content)
     // do not escape special character for HTML sake
     mustache.escape = (t => {
         if (typeof(t) === 'string') {
+            /* eslint-disable no-useless-escape */
             return t
                 .replace(/[\\]/g, '\\\\')
                 .replace(/[\"]/g, '\\\"')
@@ -19,6 +22,7 @@ async function render(name, content)
                 .replace(/[\n]/g, '\\n')
                 .replace(/[\r]/g, '\\r')
                 .replace(/[\t]/g, '\\t');
+            /* eslint-enable */
         }
         else {
             return t;
@@ -31,6 +35,7 @@ async function render(name, content)
         return await mustache.render(template, content);
     }
     catch (e) {
+        /* eslint-disable-next-line no-console */
         console.log(e);
         throw new MsgboiError(500, `unable to render template "${name}"`);
     }
