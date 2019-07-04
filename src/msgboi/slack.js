@@ -55,5 +55,5 @@ function notifyAll(channels, message)
     --- TODO: docs ---
  */
 module.exports = {
-    notifyAll: notifyAll,
+    notifyAll,
 };

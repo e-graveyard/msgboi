@@ -84,12 +84,11 @@ function compose(criticality, message, error = undefined)
 }
 
 
-/**
-    --- TODO: docs ---
- */
+/* eslint-disable no-console */
 module.exports = {
     info:    (m) => { console.info(compose('INFO', m)); },
     warn:    (m) => { console.warn(compose('WARNING', m)); },
     success: (m) => { console.log(compose('SUCCESS', m)); },
     error:   (m, e = undefined) => { console.error(compose('ERROR', m, e)); },
 };
+/* eslint-enable */

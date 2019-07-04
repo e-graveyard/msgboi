@@ -1,3 +1,5 @@
+/* global MsgboiError */
+
 /**
     --- TODO: docs ---
  */
@@ -295,5 +297,5 @@ function read(event)
     --- TODO: docs ---
  */
 module.exports = {
-    read: read,
+    read,
 };

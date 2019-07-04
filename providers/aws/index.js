@@ -25,6 +25,7 @@ const config = require('./msgboi/config');
 global.MsgboiError = require('./msgboi/error');
 
 
+/* eslint-disable-next-line no-unused-vars */
 exports.handler = async (event, context) =>
 {
     let r = null;
