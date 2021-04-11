@@ -29,7 +29,7 @@ const bundleDir = './bundle';
  */
 function convert(file)
 {
-    return yaml.safeLoad(fs.readFileSync(file));
+    return yaml.load(fs.readFileSync(file));
 }
 
 
