@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/caiertl/msgboi#readme",
   "dependencies": {
-    "mustache": "^3.0.1"
+    "mustache": "^4.2.0"
   },
   "devDependencies": {
     "ava": "^3.15.0",
