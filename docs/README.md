@@ -24,18 +24,6 @@ A cloud-native microservice that sends Slack notifications from GitLab events.
 [tag-url]: https://github.com/caian-org/msgboi/releases
 
 
-## License
-
-To the extent possible under law, [Caian Rais Ertl][me] has waived all
-copyright and related or neighboring rights to this work.
-
-[![License][cc-shield]][cc-url]
-
-[me]: https://github.com/caiertl
-[cc-shield]: https://forthebadge.com/images/badges/cc-0.svg
-[cc-url]: http://creativecommons.org/publicdomain/zero/1.0
-
-
 ## Acknowledgements
 
 Icons made by [smalllikeart][smalllikeart] from [Flaticon][flaticon] is
@@ -44,3 +32,19 @@ licensed by [CC 3.0 BY][cc3].
 [smalllikeart]: https://www.flaticon.com/authors/smalllikeart
 [flaticon]: https://www.flaticon.com
 [cc3]: http://creativecommons.org/licenses/by/3.0
+
+
+## License
+
+To the extent possible under law, [Caian Rais Ertl][me] has waived __all
+copyright and related or neighboring rights to this work__. In the spirit of
+_freedom of information_, I encourage you to fork, modify, change, share, or do
+whatever you like with this project! [`^C ^V`][kopimi]
+
+[![License][cc-shield]][cc-url]
+
+[me]: https://github.com/caiertl
+[cc-shield]: https://forthebadge.com/images/badges/cc-0.svg
+[cc-url]: http://creativecommons.org/publicdomain/zero/1.0
+
+[kopimi]: https://kopimi.com
