@@ -20,18 +20,16 @@ For more information, please see
 
 /* global MsgboiError */
 
-const data   = require('./data');
-const slack  = require('./slack');
-const gitlab = require('./gitlab');
-const render = require('./render');
-
+const data = require('./data')
+const slack = require('./slack')
+const gitlab = require('./gitlab')
+const render = require('./render')
 
 /**
     --- TODO: docs ---
  */
-async function handle(config, postData)
-{
-    /*
+async function handle (config, postData) {
+  /*
     The data received must be a valid JSON document from GitLab. If the data
     could not be parsed into a JS object or the document doesn't seems to come
     from GitLab, an exception is thrown.
@@ -40,25 +38,25 @@ async function handle(config, postData)
     specific keys: "object_kind" and "object_attributes". If these keys are
     undefined, the payload is probably malformed.
     */
-    const payload = data.fromJSON(postData);
+  const payload = data.fromJSON(postData)
 
-    if (!payload)
-        throw new MsgboiError(400, 'unable to parse the received POST data');
+  if (!payload) throw new MsgboiError(400, 'unable to parse the received POST data')
 
-    if (!(payload.object_kind && payload.object_attributes))
-        throw new MsgboiError(400, 'malformed POST data');
+  if (!(payload.object_kind && payload.object_attributes)) {
+    throw new MsgboiError(400, 'malformed POST data')
+  }
 
-    /*
+  /*
     Gitlab sends a lot of data. msgboi tries to make sense out of it by
     identifying the event kind and then creating an object containing some
     relevant information -- about the project, the pipeline stages, the
     pipeline overall status, the commit author, the external references (URLs)
     to these resources etc
     */
-    const event = gitlab.read(payload);
-    const kind  = event.kind;
+  const event = gitlab.read(payload)
+  const kind = event.kind
 
-    /*
+  /*
     Two kinds of events can be handled: pipeline events and merge request
     events. The event kind is defined at the "object_kind" key.  Each kind of
     event has it's own "statuses". The pipeline event, for instance, has four
@@ -67,36 +65,36 @@ async function handle(config, postData)
     msgboi must guarantees that user-defined configurations will be followed
     (for instance, if a given status of an event must be notified in Slack).
     */
-    let status = null;
-    let branch = null;
+  let status = null
+  let branch = null
 
-    if (kind === 'pipeline') {
-        status = event.pipe.status.state;
-        branch = event.proj.branch.name;
-    }
+  if (kind === 'pipeline') {
+    status = event.pipe.status.state
+    branch = event.proj.branch.name
+  } else if (kind === 'merge_request') {
+    status = event.mr.status.state
+    branch = event.mr.target.branch.name
+  }
 
-    else if (kind === 'merge_request') {
-        status = event.mr.status.state;
-        branch = event.mr.target.branch.name;
-    }
+  // --------------------------------------------------
+  const eventConfig = config.event[kind][status]
 
-    // --------------------------------------------------
-    const eventConfig = config.event[kind][status];
+  if (!eventConfig.notify) {
+    throw new MsgboiError(204, `"${kind}" events are set to not be notified; skipping...`)
+  }
 
-    if (!eventConfig.notify)
-        throw new MsgboiError(204, `"${kind}" events are set to not be notified; skipping...`);
+  // --------------------------------------------------
+  const notificationTargets = config.notification.branch[branch]
 
-    // --------------------------------------------------
-    const notificationTargets = config.notification.branch[branch];
+  if (!notificationTargets) {
+    throw new MsgboiError(204, `no notification rule set for branch "${branch}"; skipping...`)
+  }
 
-    if (!notificationTargets)
-        throw new MsgboiError(204, `no notification rule set for branch "${branch}"; skipping...`);
+  // If the template file is undefined for status X of event Y, use the event
+  // name as template name fallback.
+  const template = eventConfig.template || kind
 
-    // If the template file is undefined for status X of event Y, use the event
-    // name as template name fallback.
-    const template = eventConfig.template || kind;
-
-    /*
+  /*
     A template file defines a couple of keys that translates into a Slack
     notification. Each key has a value that can be either static or use one or
     more available tags. Each tag is populated directly from the Gitlab event.
@@ -127,19 +125,18 @@ async function handle(config, postData)
 
     In one or more cases, an exception will be thrown.
     */
-    const message = await render(template, event);
+  const message = await render(template, event)
 
-    return {
-        code: 200,
-        message: 'ok',
-        responses: await slack.notifyAll(notificationTargets, message),
-    };
+  return {
+    code: 200,
+    message: 'ok',
+    responses: await slack.notifyAll(notificationTargets, message)
+  }
 }
-
 
 /**
     --- TODO: docs ---
  */
 module.exports = {
-    handle,
-};
+  handle
+}

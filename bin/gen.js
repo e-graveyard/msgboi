@@ -18,86 +18,81 @@ For more information, please see
 <http://creativecommons.org/publicdomain/zero/1.0/>
 */
 
-const fs = require('fs');
-const yaml = require('js-yaml');
+const fs = require('fs')
+const yaml = require('js-yaml')
 
-const bundleDir = './bundle';
-
-
-/**
-    --- TODO: docs ---
- */
-function convert(file)
-{
-    return yaml.load(fs.readFileSync(file));
-}
-
-
-function writeModule(c, m)
-{
-    const content = `module.exports=${JSON.stringify(c)}`;
-    const module  = `${bundleDir}/msgboi/${m}.js`;
-
-    fs.writeFile(module, content, e => {
-        if (e) {
-            console.log(e);
-            throw new Error(`msgboi: impossible to generate module "${m}"`);
-        }
-    });
-}
-
+const bundleDir = './bundle'
 
 /**
     --- TODO: docs ---
  */
-function generateTemplatesModule()
-{
-    const templatesDir = `${bundleDir}/templates`;
-
-    if (!fs.existsSync(templatesDir))
-        throw new Error('msgboi: templates directory not found');
-
-    const t = {};
-    fs.readdirSync(templatesDir).map(f => {
-        const s    = f.split('.');
-        const name = s[0];
-        const ext  = s[1];
-
-        if (ext === 'yml') {
-            t[name] = JSON.stringify({
-                attachments: [ convert(`${templatesDir}/${f}`) ]
-            });
-        }
-    });
-
-    if (!Object.keys(t).length)
-        throw new Error('msgboi: no template file found');
-
-    writeModule(t, 'templates');
+function convert (file) {
+  return yaml.load(fs.readFileSync(file))
 }
 
+function writeModule (c, m) {
+  const content = `module.exports=${JSON.stringify(c)}`
+  const module = `${bundleDir}/msgboi/${m}.js`
+
+  fs.writeFile(module, content, (e) => {
+    if (e) {
+      console.log(e)
+      throw new Error(`msgboi: impossible to generate module "${m}"`)
+    }
+  })
+}
 
 /**
     --- TODO: docs ---
  */
-function generateConfigModule()
-{
-    const configFile = `${bundleDir}/config.yml`;
+function generateTemplatesModule () {
+  const templatesDir = `${bundleDir}/templates`
 
-    if (!fs.existsSync(configFile))
-        throw new Error('msgboi: config file not found');
+  if (!fs.existsSync(templatesDir)) {
+    throw new Error('msgboi: templates directory not found')
+  }
 
-    const c = convert(configFile);
+  const t = {}
+  fs.readdirSync(templatesDir).map((f) => {
+    const s = f.split('.')
+    const name = s[0]
+    const ext = s[1]
 
-    if (!(c.event && c.notification))
-        throw new Error('msgboi: malformed config file');
+    if (ext === 'yml') {
+      t[name] = JSON.stringify({
+        attachments: [convert(`${templatesDir}/${f}`)]
+      })
+    }
+  })
 
-    writeModule({ event: c.event, notification: c.notification }, 'config');
+  if (!Object.keys(t).length) {
+    throw new Error('msgboi: no template file found')
+  }
+
+  writeModule(t, 'templates')
 }
-
 
 /**
     --- TODO: docs ---
  */
-generateConfigModule();
-generateTemplatesModule();
+function generateConfigModule () {
+  const configFile = `${bundleDir}/config.yml`
+
+  if (!fs.existsSync(configFile)) {
+    throw new Error('msgboi: config file not found')
+  }
+
+  const c = convert(configFile)
+
+  if (!(c.event && c.notification)) {
+    throw new Error('msgboi: malformed config file')
+  }
+
+  writeModule({ event: c.event, notification: c.notification }, 'config')
+}
+
+/**
+    --- TODO: docs ---
+ */
+generateConfigModule()
+generateTemplatesModule()
