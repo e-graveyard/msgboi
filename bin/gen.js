@@ -23,9 +23,6 @@ const yaml = require('js-yaml')
 
 const bundleDir = './bundle'
 
-/**
-    --- TODO: docs ---
- */
 function convert (file) {
   return yaml.load(fs.readFileSync(file))
 }
@@ -42,9 +39,6 @@ function writeModule (c, m) {
   })
 }
 
-/**
-    --- TODO: docs ---
- */
 function generateTemplatesModule () {
   const templatesDir = `${bundleDir}/templates`
 
@@ -53,7 +47,7 @@ function generateTemplatesModule () {
   }
 
   const t = {}
-  fs.readdirSync(templatesDir).map((f) => {
+  fs.readdirSync(templatesDir).forEach((f) => {
     const s = f.split('.')
     const name = s[0]
     const ext = s[1]
@@ -72,9 +66,6 @@ function generateTemplatesModule () {
   writeModule(t, 'templates')
 }
 
-/**
-    --- TODO: docs ---
- */
 function generateConfigModule () {
   const configFile = `${bundleDir}/config.yml`
 
@@ -91,8 +82,5 @@ function generateConfigModule () {
   writeModule({ event: c.event, notification: c.notification }, 'config')
 }
 
-/**
-    --- TODO: docs ---
- */
 generateConfigModule()
 generateTemplatesModule()

@@ -1,12 +1,9 @@
 /* global MsgboiError */
 
-const mustache = require('mustache')
-const templates = require('./templates')
+import mustache from 'mustache'
+import * as templates from './templates'
 
-/**
-    --- TODO: docs ---
- */
-async function render (name, content) {
+export async function render (name, content) {
   // do not escape special character for HTML sake
   mustache.escape = (t) => {
     if (typeof t === 'string') {
@@ -31,13 +28,7 @@ async function render (name, content) {
   try {
     return await mustache.render(template, content)
   } catch (e) {
-    /* eslint-disable-next-line no-console */
     console.log(e)
     throw new MsgboiError(500, `unable to render template "${name}"`)
   }
 }
-
-/**
-    --- TODO: docs ---
- */
-module.exports = render

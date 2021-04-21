@@ -37,7 +37,7 @@ exports.handler = async (event, context) => {
   if (r.code < 400) {
     logger.success(r.message)
 
-    r.responses.map((r) => {
+    r.responses.forEach((r) => {
       if (r.code < 400) {
         logger.success(`notification to channel ${r.channel} succeded`)
       } else {

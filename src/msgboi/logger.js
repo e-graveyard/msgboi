@@ -1,48 +1,17 @@
-/**
-    --- TODO: docs ---
- */
 const color = {
-  red: (msg) => {
-    return `\u001B[1;31m${msg}\u001B[0m`
-  },
-
-  green: (msg) => {
-    return `\u001B[1;32m${msg}\u001B[0m`
-  },
-
-  yellow: (msg) => {
-    return `\u001B[1;33m${msg}\u001B[0m`
-  },
-
-  purple: (msg) => {
-    return `\u001B[0;35m${msg}\u001B[0m`
-  },
-
-  cyan: (msg) => {
-    return `\u001B[0;36m${msg}\u001B[0m`
-  },
-
-  white: (msg) => {
-    return `\u001B[1;37m${msg}\u001B[0m`
-  },
-
-  grey: (msg) => {
-    return `\u001B[2;37m${msg}\u001B[0m`
-  }
+  red: (msg) => `\u001B[1;31m${msg}\u001B[0m`,
+  green: (msg) => `\u001B[1;32m${msg}\u001B[0m`,
+  yellow: (msg) => `\u001B[1;33m${msg}\u001B[0m`,
+  purple: (msg) => `\u001B[0;35m${msg}\u001B[0m`,
+  cyan: (msg) => `\u001B[0;36m${msg}\u001B[0m`,
+  white: (msg) => `\u001B[1;37m${msg}\u001B[0m`,
+  grey: (msg) => `\u001B[2;37m${msg}\u001B[0m`
 }
 
-/**
-    --- TODO: docs ---
- */
-function getTimestamp () {
-  return new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
-}
+const getTS = () => new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
 
-/**
-    --- TODO: docs ---
- */
 function compose (criticality, message, error = undefined) {
-  const datef = `[${color.grey(getTimestamp())}]`
+  const datef = `[${color.grey(getTS())}]`
   let typef = `${criticality}:`
 
   switch (criticality) {
@@ -75,19 +44,7 @@ function compose (criticality, message, error = undefined) {
   return `${datef} ${typef} ${message}`
 }
 
-/* eslint-disable no-console */
-module.exports = {
-  info: (m) => {
-    console.info(compose('INFO', m))
-  },
-  warn: (m) => {
-    console.warn(compose('WARNING', m))
-  },
-  success: (m) => {
-    console.log(compose('SUCCESS', m))
-  },
-  error: (m, e = undefined) => {
-    console.error(compose('ERROR', m, e))
-  }
-}
-/* eslint-enable */
+export const info = (m) => console.info(compose('INFO', m))
+export const warn = (m) => console.warn(compose('WARNING', m))
+export const success = (m) => console.log(compose('SUCCESS', m))
+export const error = (m, e = undefined) => console.error(compose('ERROR', m, e))

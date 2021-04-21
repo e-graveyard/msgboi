@@ -40,9 +40,6 @@ process.on('SIGTERM', exitGracefully)
 
 logger.info('msgboi has started')
 
-/**
-    --- TODO: docs ---
- */
 function exitGracefully () {
   if (server) {
     logger.warn('got SIGNAL')
@@ -58,9 +55,6 @@ function exitGracefully () {
   }
 }
 
-/**
-    --- TODO: docs ---
- */
 async function handle (c, d) {
   try {
     return await msgboi.handle(c, d)
@@ -69,9 +63,6 @@ async function handle (c, d) {
   }
 }
 
-/**
-    --- TODO: docs ---
- */
 async function loadService (s) {
   server = http.createServer((req, res) => {
     let body = []
@@ -79,7 +70,6 @@ async function loadService (s) {
 
     const u = req.connection.remoteAddress
 
-    // --------------------------------------------------
     req.on('data', (d) => {
       body.push(d)
 
@@ -88,7 +78,6 @@ async function loadService (s) {
       }
     })
 
-    // --------------------------------------------------
     req.on('end', async () => {
       if (code === 200) {
         body = Buffer.concat(body).toString()
@@ -100,7 +89,7 @@ async function loadService (s) {
           if (result.code < 400) {
             logger.success(log)
 
-            result.responses.map((r) => {
+            result.responses.forEach((r) => {
               if (r.code < 400) {
                 logger.success(`(${u}) notification to channel "${r.channel}" succeded`)
               } else {
@@ -124,7 +113,6 @@ async function loadService (s) {
       res.end()
     })
 
-    // --------------------------------------------------
     if (req.url !== '/') {
       logger.error(`(${u}) requested "${req.url}"`)
       code = 404
@@ -137,33 +125,19 @@ async function loadService (s) {
     }
   })
 
-  // --------------------------------------------------
   server.on('connection', (s) => {
     sockets.add(s)
-
-    s.on('close', () => {
-      sockets.delete(s)
-    })
+    s.on('close', () => sockets.delete(s))
   })
 
-  // --------------------------------------------------
-  server.listen(s.port, s.host, () => {
-    logger.info(`listening on ${s.host}:${s.port}`)
-  })
+  server.listen(s.port, s.host, () => logger.info(`listening on ${s.host}:${s.port}`))
 }
 
-/**
-    --- TODO: docs ---
- */
 const port = process.env.MSGBOI_PORT || 8080
 const host = process.env.MSGBOI_HOST || 'localhost'
 
 try {
-  loadService({
-    port: port,
-    host: host,
-    config: config
-  })
+  loadService({ port, host, config })
 } catch (e) {
   logger.error(e.content.message)
   logger.info('exiting...')

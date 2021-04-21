@@ -1,7 +1,4 @@
-/**
-    --- TODO: docs ---
- */
-module.exports = class MsgboiError extends Error {
+export class MsgboiError extends Error {
   constructor (code, message, parentError = undefined) {
     super()
 

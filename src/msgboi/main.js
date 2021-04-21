@@ -20,15 +20,12 @@ For more information, please see
 
 /* global MsgboiError */
 
-const data = require('./data')
-const slack = require('./slack')
-const gitlab = require('./gitlab')
-const render = require('./render')
+import * as data from './data'
+import * as slack from './slack'
+import * as gitlab from './gitlab'
+import * as render from './render'
 
-/**
-    --- TODO: docs ---
- */
-async function handle (config, postData) {
+export async function handle (config, postData) {
   /*
     The data received must be a valid JSON document from GitLab. If the data
     could not be parsed into a JS object or the document doesn't seems to come
@@ -40,7 +37,9 @@ async function handle (config, postData) {
     */
   const payload = data.fromJSON(postData)
 
-  if (!payload) throw new MsgboiError(400, 'unable to parse the received POST data')
+  if (!payload) {
+    throw new MsgboiError(400, 'unable to parse the received POST data')
+  }
 
   if (!(payload.object_kind && payload.object_attributes)) {
     throw new MsgboiError(400, 'malformed POST data')
@@ -54,7 +53,7 @@ async function handle (config, postData) {
     to these resources etc
     */
   const event = gitlab.read(payload)
-  const kind = event.kind
+  const { kind } = event
 
   /*
     Two kinds of events can be handled: pipeline events and merge request
@@ -76,16 +75,12 @@ async function handle (config, postData) {
     branch = event.mr.target.branch.name
   }
 
-  // --------------------------------------------------
   const eventConfig = config.event[kind][status]
-
   if (!eventConfig.notify) {
     throw new MsgboiError(204, `"${kind}" events are set to not be notified; skipping...`)
   }
 
-  // --------------------------------------------------
   const notificationTargets = config.notification.branch[branch]
-
   if (!notificationTargets) {
     throw new MsgboiError(204, `no notification rule set for branch "${branch}"; skipping...`)
   }
@@ -132,11 +127,4 @@ async function handle (config, postData) {
     message: 'ok',
     responses: await slack.notifyAll(notificationTargets, message)
   }
-}
-
-/**
-    --- TODO: docs ---
- */
-module.exports = {
-  handle
 }

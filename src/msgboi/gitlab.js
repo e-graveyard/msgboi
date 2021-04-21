@@ -1,15 +1,8 @@
 /* global MsgboiError */
 
-/**
-    --- TODO: docs ---
- */
-function toUnixTime (timestamp) {
-  return (new Date(timestamp).getTime() / 1000) | 0
-}
+const toUnixTime = (ts) => (new Date(ts).getTime() / 1000) | 0
+const hasOwnProp = Object.prototype.hasOwnProperty.call
 
-/**
-    --- TODO: docs ---
- */
 function pipeStatusIcon (status) {
   switch (status) {
     case 'success':
@@ -23,9 +16,6 @@ function pipeStatusIcon (status) {
   }
 }
 
-/**
-    --- TODO: docs ---
- */
 function pipeStatusColor (status) {
   switch (status) {
     case 'success':
@@ -36,9 +26,6 @@ function pipeStatusColor (status) {
   }
 }
 
-/**
-    --- TODO: docs ---
- */
 function mergeStatusArt (status) {
   let color = null
   let icon = null
@@ -63,40 +50,33 @@ function mergeStatusArt (status) {
   return { color, icon }
 }
 
-/**
-    --- TODO: docs ---
- */
 function getFailedStage (stages) {
   for (let i = 0; i < stages.length; i++) {
-    if (stages[i].status == 'failed') return stages[i].name
+    if (stages[i].status === 'failed') return stages[i].name
   }
 
   return null
 }
 
-/**
-    --- TODO: docs ---
- */
 function drawStagesStatus (stages) {
   let statusf = ''
 
-  stages.map((stage) => {
+  stages.forEach((stage) => {
     statusf = statusf.concat(`(${pipeStatusIcon(stage.status)}) *${stage.name}* >> `)
   })
 
   return statusf.substring(0, statusf.length - 4)
 }
 
-/**
-    --- TODO: docs ---
- */
 function orderStages (builds) {
   const stages = {}
-  builds.map((build) => {
+  builds.forEach((build) => {
     const name = build.stage
 
-    if (stages.hasOwnProperty(name)) {
-      if (stages[name].status == 'success') stages[name].status = build.status
+    if (hasOwnProp(stages, name)) {
+      if (stages[name].status === 'success') {
+        stages[name].status = build.status
+      }
     } else {
       stages[name] = {
         id: build.id,
@@ -120,16 +100,10 @@ function orderStages (builds) {
   order.sort()
 
   const stagesOrdered = []
-  order.map((id) => {
-    stagesOrdered.push(stagesById[id])
-  })
-
+  order.forEach((id) => stagesOrdered.push(stagesById[id]))
   return stagesOrdered
 }
 
-/**
-    --- TODO: docs ---
- */
 function getCommonInfo (e) {
   const m = {
     kind: e.object_kind
@@ -149,16 +123,12 @@ function getCommonInfo (e) {
   return m
 }
 
-/**
-    --- TODO: docs ---
- */
 function getMergeRequestInfo (e) {
   const m = getCommonInfo(e)
 
   const oattr = e.object_attributes
   const { color, icon } = mergeStatusArt(oattr.state)
 
-  // --------------------------------------------------
   const lc = e.object_attributes.last_commit
   m.commit = {
     message: lc.message,
@@ -166,7 +136,6 @@ function getMergeRequestInfo (e) {
     email: lc.author.email
   }
 
-  // --------------------------------------------------
   m.mr = {
     id: oattr.url.split('/').pop(),
     url: oattr.url,
@@ -195,29 +164,23 @@ function getMergeRequestInfo (e) {
   return m
 }
 
-/**
-    --- TODO: docs ---
- */
 function getPipelineInfo (e) {
   const m = getCommonInfo(e)
 
   const oattr = e.object_attributes
   const stages = orderStages(e.builds)
 
-  // --------------------------------------------------
   m.commit = {
     message: e.commit.message,
     author: e.commit.author.name,
     email: e.commit.author.email
   }
 
-  // --------------------------------------------------
   m.proj.branch = {
     name: oattr.ref,
     url: `${e.project.web_url}/tree/${oattr.ref}`
   }
 
-  // --------------------------------------------------
   m.pipe = {
     id: oattr.id,
     url: `${m.proj.url}/pipelines/${oattr.id}`,
@@ -235,7 +198,6 @@ function getPipelineInfo (e) {
     }
   }
 
-  // --------------------------------------------------
   m.decor = {}
   m.decor.stage_status =
     oattr.status === 'success'
@@ -245,17 +207,14 @@ function getPipelineInfo (e) {
   return m
 }
 
-/**
-    --- TODO: docs ---
- */
-function read (event) {
+export function read (event) {
   const kind = event.object_kind
   const handler = {
     pipeline: getPipelineInfo,
     merge_request: getMergeRequestInfo
   }
 
-  if (!handler.hasOwnProperty(kind)) {
+  if (!hasOwnProp(handler, kind)) {
     throw new MsgboiError(204, `unsupported event "${kind}"; skipping..."`)
   }
 
@@ -268,11 +227,4 @@ function read (event) {
       err
     )
   }
-}
-
-/**
-    --- TODO: docs ---
- */
-module.exports = {
-  read
 }
