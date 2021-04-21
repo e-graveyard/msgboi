@@ -4,7 +4,6 @@
   "description": "send beautiful slack notifications from gitlab events",
   "main": "index.js",
   "scripts": {
-    "test": "ava \"**/*.test.js\"",
     "gen": "node bin/gen.js",
     "prettify": "prettier --no-semi --print-width 100 --single-quote --trailing-comma none --write '**/*.js'",
     "standard": "standard --fix",
@@ -13,7 +12,10 @@
     "check:style": "standard",
     "bundle": "webpack",
     "bundle:aws": "./bin/bundle.sh aws",
-    "bundle:server": "./bin/bundle.sh server"
+    "bundle:server": "./bin/bundle.sh server",
+    "test": "jest --verbose",
+    "test:unit": "jest --collect-coverage",
+    "coverage:report": "codecov --token=\"$CODECOV_TOKEN\""
   },
   "repository": {
     "type": "git",
@@ -27,6 +29,21 @@
   "homepage": "https://github.com/caiertl/msgboi#readme",
   "dependencies": {
     "mustache": "^4.2.0"
+  },
+  "standard": {
+    "parser": "babel-eslint"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "/dist/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "lines": 80
+      }
+    }
   },
   "devDependencies": {
     "@babel/cli": "^7.13.16",
