@@ -9,18 +9,15 @@ clean() {
 bundle() {
     cp -r src bundle
 
-    # ...
     cp "providers/$1/index.js" bundle
     npm run gen
     npm run bundle
 }
 
 compact() {
-    # ...
     cd dist
     zip -r bundle.zip .
 
-    # ...
     cd ..
     mv dist/bundle.zip .
 }

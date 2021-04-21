@@ -1,36 +1,13 @@
-/*
-The person who associated a work with this deed has dedicated the work to the
-public domain by waiving all of his or her rights to the work worldwide under
-copyright law, including all related and neighboring rights, to the extent
-allowed by law.
-
-You can copy, modify, distribute and perform the work, even for commercial
-purposes, all without asking permission.
-
-AFFIRMER OFFERS THE WORK AS-IS AND MAKES NO REPRESENTATIONS OR WARRANTIES OF
-ANY KIND CONCERNING THE WORK, EXPRESS, IMPLIED, STATUTORY OR OTHERWISE,
-INCLUDING WITHOUT LIMITATION WARRANTIES OF TITLE, MERCHANTABILITY, FITNESS FOR
-A PARTICULAR PURPOSE, NON INFRINGEMENT, OR THE ABSENCE OF LATENT OR OTHER
-DEFECTS, ACCURACY, OR THE PRESENT OR ABSENCE OF ERRORS, WHETHER OR NOT
-DISCOVERABLE, ALL TO THE GREATEST EXTENT PERMISSIBLE UNDER APPLICABLE LAW.
-
-For more information, please see
-<http://creativecommons.org/publicdomain/zero/1.0/>
-*/
-
 const fs = require('fs')
+const path = require('path')
 const yaml = require('js-yaml')
 
 const bundleDir = './bundle'
-
-function convert (file) {
-  return yaml.load(fs.readFileSync(file))
-}
+const convert = (f) => yaml.load(fs.readFileSync(f))
 
 function writeModule (c, m) {
-  const content = `module.exports=${JSON.stringify(c)}`
-  const module = `${bundleDir}/msgboi/${m}.js`
-
+  const content = 'module.exports=' + JSON.stringify(c)
+  const module = path.join(bundleDir, 'msgboi', m + '.js')
   fs.writeFile(module, content, (e) => {
     if (e) {
       console.log(e)
@@ -40,22 +17,17 @@ function writeModule (c, m) {
 }
 
 function generateTemplatesModule () {
-  const templatesDir = `${bundleDir}/templates`
-
+  const templatesDir = path.join(bundleDir, 'templates')
   if (!fs.existsSync(templatesDir)) {
     throw new Error('msgboi: templates directory not found')
   }
 
   const t = {}
   fs.readdirSync(templatesDir).forEach((f) => {
-    const s = f.split('.')
-    const name = s[0]
-    const ext = s[1]
+    const [name, ext] = f.split('.')
 
     if (ext === 'yml') {
-      t[name] = JSON.stringify({
-        attachments: [convert(`${templatesDir}/${f}`)]
-      })
+      t[name] = JSON.stringify({ attachments: [convert(`${templatesDir}/${f}`)] })
     }
   })
 
@@ -67,19 +39,17 @@ function generateTemplatesModule () {
 }
 
 function generateConfigModule () {
-  const configFile = `${bundleDir}/config.yml`
-
+  const configFile = path.join(bundleDir, 'config.yml')
   if (!fs.existsSync(configFile)) {
     throw new Error('msgboi: config file not found')
   }
 
-  const c = convert(configFile)
-
-  if (!(c.event && c.notification)) {
+  const { event, notification } = convert(configFile)
+  if (!(event && notification)) {
     throw new Error('msgboi: malformed config file')
   }
 
-  writeModule({ event: c.event, notification: c.notification }, 'config')
+  writeModule({ event, notification }, 'config')
 }
 
 generateConfigModule()
