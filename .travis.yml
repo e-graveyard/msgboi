@@ -1,23 +1,17 @@
-sudo: required
 language: node_js
 node_js: "15"
 
-services:
-  - "docker"
-
 stages:
   - test
-  - push
 
 jobs:
   include:
     - stage: test
-      name: "Unit tests"
+      name: "Test and compile"
       install:
         - npm install
       script:
         - npm test
-
-    - stage: push
-      name: "Push to registry"
-      if: tag IS present
+      after_script:
+        - npm run bundle:aws
+        - npm run bundle:server
