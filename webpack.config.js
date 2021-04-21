@@ -1,20 +1,22 @@
-const TerserPlugin = require('terser-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin')
 
 module.exports = {
-    mode: 'production',
-    entry: './bundle/index.js',
-    target: 'node',
-    optimization: {
-        minimizer: [new TerserPlugin({
-            terserOptions: {
-                output: { comments: false },
-            },
-        })],
-    },
-    output: {
-        filename: 'index.js',
-        library: 'handler',
-        libraryTarget: 'commonjs',
-        libraryExport: 'handler',
-    },
-};
+  mode: 'production',
+  entry: './bundle/index.js',
+  target: 'node',
+  optimization: {
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          output: { comments: false }
+        }
+      })
+    ]
+  },
+  output: {
+    filename: 'index.js',
+    library: 'handler',
+    libraryTarget: 'commonjs',
+    libraryExport: 'handler'
+  }
+}
