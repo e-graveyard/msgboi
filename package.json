@@ -3,6 +3,16 @@
   "version": "0.2.1",
   "description": "send beautiful slack notifications from gitlab events",
   "main": "index.js",
+  "homepage": "https://github.com/caiertl/msgboi#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/caiertl/msgboi.git"
+  },
+  "author": "Caian R. Ertl",
+  "license": "CC0-1.0",
+  "bugs": {
+    "url": "https://github.com/caiertl/msgboi/issues"
+  },
   "scripts": {
     "gen": "node bin/gen.js",
     "prettify": "prettier --no-semi --print-width 100 --single-quote --trailing-comma none --write '**/*.js'",
@@ -16,19 +26,6 @@
     "test": "jest --verbose",
     "test:unit": "jest --collect-coverage",
     "coverage:report": "codecov --token=\"$CODECOV_TOKEN\""
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/caiertl/msgboi.git"
-  },
-  "author": "Caian R. Ertl",
-  "license": "CC0-1.0",
-  "bugs": {
-    "url": "https://github.com/caiertl/msgboi/issues"
-  },
-  "homepage": "https://github.com/caiertl/msgboi#readme",
-  "dependencies": {
-    "mustache": "^4.2.0"
   },
   "standard": {
     "parser": "babel-eslint"
@@ -44,6 +41,9 @@
         "lines": 80
       }
     }
+  },
+  "dependencies": {
+    "mustache": "^4.2.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.13.16",
