@@ -3,7 +3,7 @@
 import mustache from 'mustache'
 import * as templates from './templates'
 
-export async function render (name, content) {
+export default async function render (name, content) {
   // do not escape special character for HTML sake
   mustache.escape = (t) => {
     if (typeof t === 'string') {
@@ -24,7 +24,6 @@ export async function render (name, content) {
   }
 
   const template = templates[name]
-
   try {
     return await mustache.render(template, content)
   } catch (e) {
