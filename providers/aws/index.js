@@ -1,8 +1,8 @@
-import * as msgboi from './msgboi/main'
-import * as logger from './msgboi/logger'
-import * as config from './msgboi/config'
+import * as msgboi from './core/main'
+import * as logger from './core/logger'
+import * as config from './core/config'
 
-global.MsgboiError = require('./msgboi/error')
+global.MsgboiError = require('./core/error')
 
 /* eslint-disable-next-line no-unused-vars */
 exports.handler = async (event, context) => {

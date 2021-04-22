@@ -1,7 +1,7 @@
 import http from 'http'
-import * as msgboi from './msgboi/main'
-import * as logger from './msgboi/logger'
-import * as config from './msgboi/config'
+import * as msgboi from './core/main'
+import * as logger from './core/logger'
+import * as config from './core/config'
 
 // the HTTP server object
 let server = null
@@ -9,7 +9,7 @@ let server = null
 // opened sockets "table"
 const sockets = new Set()
 
-global.MsgboiError = require('./msgboi/error')
+global.MsgboiError = require('./core/error')
 
 // signal handlers
 process.on('SIGINT', exitGracefully)

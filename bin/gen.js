@@ -7,7 +7,7 @@ const convert = (f) => yaml.load(fs.readFileSync(f))
 
 function writeModule (c, m) {
   const content = 'module.exports=' + JSON.stringify(c)
-  const module = path.join(bundleDir, 'msgboi', m + '.js')
+  const module = path.join(bundleDir, 'core', m + '.js')
   fs.writeFile(module, content, (e) => {
     if (e) {
       console.log(e)
