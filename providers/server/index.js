@@ -9,8 +9,6 @@ let server = null
 // opened sockets "table"
 const sockets = new Set()
 
-global.MsgboiError = require('./core/error')
-
 // signal handlers
 process.on('SIGINT', exitGracefully)
 process.on('SIGHUP', exitGracefully)

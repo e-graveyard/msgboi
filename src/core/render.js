@@ -1,7 +1,7 @@
-/* global MsgboiError */
-
 import mustache from 'mustache'
 import * as templates from './templates'
+
+import { MsgboiError } from './error'
 
 export default async function render (name, content) {
   // do not escape special character for HTML sake

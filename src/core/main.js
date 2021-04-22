@@ -1,9 +1,9 @@
-/* global MsgboiError */
-
 import render from './render'
 import * as data from './data'
 import * as slack from './slack'
 import * as gitlab from './gitlab'
+
+import { MsgboiError } from './error'
 
 export async function handle (config, postData) {
   /*

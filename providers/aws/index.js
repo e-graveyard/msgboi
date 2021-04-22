@@ -2,8 +2,6 @@ import * as msgboi from './core/main'
 import * as logger from './core/logger'
 import * as config from './core/config'
 
-global.MsgboiError = require('./core/error')
-
 /* eslint-disable-next-line no-unused-vars */
 exports.handler = async (event, context) => {
   let r = null

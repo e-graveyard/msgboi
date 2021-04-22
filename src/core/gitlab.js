@@ -1,4 +1,4 @@
-/* global MsgboiError */
+import { MsgboiError } from './error'
 
 const toUnixTime = (ts) => (new Date(ts).getTime() / 1000) | 0
 const hasOwnProp = Object.prototype.hasOwnProperty.call
