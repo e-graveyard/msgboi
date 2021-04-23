@@ -1,8 +1,9 @@
-FROM node:10.15.3-alpine AS base
+FROM node:14.16.1-alpine AS base
 MAINTAINER Caian R. Ertl <hi@caian.org>
 WORKDIR /usr/msgboi
 
 FROM base AS deps
+RUN npm i -g npm@latest
 COPY ["package.json", "package-lock.json", "./"]
 RUN npm install
 
