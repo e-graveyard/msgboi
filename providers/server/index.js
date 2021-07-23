@@ -1,6 +1,6 @@
 import http from 'http'
-import * as msgboi from './core/main'
-import * as logger from './core/logger'
+import msgboi from './core/main'
+import logger from './core/logger'
 import * as config from './core/config'
 
 // the HTTP server object
@@ -18,7 +18,7 @@ process.on('SIGTERM', exitGracefully)
 logger.info('msgboi has started')
 
 function exitGracefully () {
-  if (server) {
+  if (server !== null) {
     logger.warn('got SIGNAL')
 
     for (const s of sockets.values()) {
@@ -34,7 +34,7 @@ function exitGracefully () {
 
 async function handle (c, d) {
   try {
-    return await msgboi.handle(c, d)
+    return await msgboi(c, d)
   } catch (e) {
     return e.content
   }

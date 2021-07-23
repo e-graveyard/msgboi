@@ -10,41 +10,38 @@ const color = {
 
 const getTS = () => new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '')
 
-function compose (criticality, message, error = undefined) {
-  const datef = `[${color.grey(getTS())}]`
-  let typef = `${criticality}:`
+function compose (criticality, message, error) {
+  const typef = `${criticality}:`
+  const q = (t) => `[${color.grey(getTS())}] ${t} ${message}`
 
   switch (criticality) {
     case 'INFO':
-      typef = `${color.cyan(typef)}`
-      break
+      return q(color.cyan(typef))
 
     case 'ERROR':
-      typef = `${color.red(typef)}`
-
-      if (error) {
-        message += `
-            \n${color.white('ERROR MESSAGE:')}\n
-            ${color.purple(error.message)}
-            \n${color.white('STACK TRACE:')}\n
-            ${error.stack}
-            \n${color.white('END OF STACK TRACE')}\n`
+      if (error instanceof Error) {
+        message += [
+          color.white('ERROR MESSAGE:'),
+          color.purple(error.message),
+          color.white('STACK TRACE:'),
+          error.stack,
+          color.white('END OF STACK TRACE')
+        ].join('\n')
       }
-      break
+
+      return q(color.red(typef))
 
     case 'WARNING':
-      typef = `${color.yellow(typef)}`
-      break
+      return q(color.yellow(typef))
 
     case 'SUCCESS':
-      typef = `${color.green(typef)}`
-      break
+      return color.green(typef)
   }
-
-  return `${datef} ${typef} ${message}`
 }
 
-export const info = (m) => console.info(compose('INFO', m))
-export const warn = (m) => console.warn(compose('WARNING', m))
-export const success = (m) => console.log(compose('SUCCESS', m))
-export const error = (m, e = undefined) => console.error(compose('ERROR', m, e))
+export default {
+  info: (m) => console.info(compose('INFO', m)),
+  warn: (m) => console.warn(compose('WARNING', m)),
+  success: (m) => console.log(compose('SUCCESS', m)),
+  error: (m, e) => console.error(compose('ERROR', m, e))
+}

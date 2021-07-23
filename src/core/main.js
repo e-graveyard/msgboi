@@ -1,11 +1,10 @@
 import render from './render'
-import * as data from './data'
-import * as slack from './slack'
-import * as gitlab from './gitlab'
+import notifyAll from './slack'
+import processGitlabEvent from './gitlab'
 
-import { MsgboiError } from './error'
+import MsgboiError from './error'
 
-export async function handle (config, postData) {
+export default async function (config, postData) {
   /*
     The data received must be a valid JSON document from GitLab. If the data
     could not be parsed into a JS object or the document doesn't seems to come
@@ -15,11 +14,13 @@ export async function handle (config, postData) {
     specific keys: "object_kind" and "object_attributes". If these keys are
     undefined, the payload is probably malformed.
     */
-  const payload = data.fromJSON(postData)
-
-  if (!payload) {
-    throw new MsgboiError(400, 'unable to parse the received POST data')
-  }
+  const payload = (() => {
+    try {
+      return JSON.parse(postData)
+    } catch (e) {
+      throw new MsgboiError(400, 'unable to parse the received POST data')
+    }
+  })()
 
   if (!(payload.object_kind && payload.object_attributes)) {
     throw new MsgboiError(400, 'malformed POST data')
@@ -32,8 +33,7 @@ export async function handle (config, postData) {
     pipeline overall status, the commit author, the external references (URLs)
     to these resources etc
     */
-  const event = gitlab.read(payload)
-  const { kind } = event
+  const event = processGitlabEvent(payload)
 
   /*
     Two kinds of events can be handled: pipeline events and merge request
@@ -44,20 +44,20 @@ export async function handle (config, postData) {
     msgboi must guarantees that user-defined configurations will be followed
     (for instance, if a given status of an event must be notified in Slack).
     */
-  let status = null
-  let branch = null
+  const [status, branch] = (() => {
+    switch (event.kind) {
+      case 'pipeline':
+        return [event.pipe.status.state, event.proj.branch.name]
+      case 'merge_request':
+        return [event.mr.status.state, event.mr.target.branch.name]
+      default:
+        return [null, null]
+    }
+  })()
 
-  if (kind === 'pipeline') {
-    status = event.pipe.status.state
-    branch = event.proj.branch.name
-  } else if (kind === 'merge_request') {
-    status = event.mr.status.state
-    branch = event.mr.target.branch.name
-  }
-
-  const eventConfig = config.event[kind][status]
+  const eventConfig = config.event[event.kind][status]
   if (!eventConfig.notify) {
-    throw new MsgboiError(204, `"${kind}" events are set to not be notified; skipping...`)
+    throw new MsgboiError(204, `"${event.kind}" events are set to not be notified; skipping...`)
   }
 
   const notificationTargets = config.notification.branch[branch]
@@ -67,7 +67,7 @@ export async function handle (config, postData) {
 
   // If the template file is undefined for status X of event Y, use the event
   // name as template name fallback.
-  const template = eventConfig.template || kind
+  const template = eventConfig.template ?? event.kind
 
   /*
     A template file defines a couple of keys that translates into a Slack
@@ -105,6 +105,6 @@ export async function handle (config, postData) {
   return {
     code: 200,
     message: 'ok',
-    responses: await slack.notifyAll(notificationTargets, message)
+    responses: await notifyAll(notificationTargets, message)
   }
 }

@@ -1,16 +1,15 @@
-import * as msgboi from './core/main'
-import * as logger from './core/logger'
+import msgboi from './core/main'
+import logger from './core/logger'
 import * as config from './core/config'
 
-/* eslint-disable-next-line no-unused-vars */
-exports.handler = async (event, context) => {
-  let r = null
-
-  try {
-    r = await msgboi.handle(config, event.body)
-  } catch (e) {
-    r = e.content
-  }
+export async function handler (event, _) {
+  const r = await (async () => {
+    try {
+      return await msgboi(config, event.body)
+    } catch (e) {
+      return e.content
+    }
+  })()
 
   if (r.code < 400) {
     logger.success(r.message)

@@ -1,6 +1,6 @@
 import https from 'https'
 
-function send (channel, payload) {
+function s (channel, payload) {
   const info = {
     hostname: 'hooks.slack.com',
     path: `/services/${channel}`,
@@ -12,15 +12,13 @@ function send (channel, payload) {
     }
   }
 
+  const q = (code) => ({ channel, code })
   return new Promise((resolve, reject) => {
-    const req = https.request(info, (res) => resolve({ channel: channel, code: res.statusCode }))
-    req.on('error', () => reject(new Error({ channel: channel, code: 500 })))
+    const req = https.request(info, (res) => resolve(q(res.statusCode)))
+    req.on('error', () => reject(new Error(q(500))))
     req.write(payload)
     req.end()
   })
 }
 
-export async function notifyAll (channels, message) {
-  const promises = channels.map((c) => send(c, message))
-  return await Promise.all(promises)
-}
+export default (channels, message) => Promise.all(channels.map((c) => s(c, message)))

@@ -1,11 +1,6 @@
-export class MsgboiError extends Error {
-  constructor (code, message, parentError = undefined) {
+export default class extends Error {
+  constructor (code, message, error) {
     super()
-
-    this.content = {
-      code: code,
-      error: parentError,
-      message: message
-    }
+    this.content = { code, error, message }
   }
 }
