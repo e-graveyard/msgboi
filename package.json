@@ -3,44 +3,52 @@
   "version": "0.2.1",
   "description": "send beautiful slack notifications from gitlab events",
   "main": "index.js",
-  "homepage": "https://github.com/caiertl/msgboi#readme",
+  "author": "Caian R. Ertl <hi@caian.org>",
+  "license": "CC0-1.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/caiertl/msgboi.git"
+    "url": "git+https://github.com/caian-org/msgboi.git"
   },
-  "author": "Caian R. Ertl",
-  "license": "CC0-1.0",
   "bugs": {
-    "url": "https://github.com/caiertl/msgboi/issues"
+    "url": "https://github.com/caian-org/msgboi/issues"
   },
+  "homepage": "https://github.com/caian-org/msgboi#readme",
   "scripts": {
     "gen": "node bin/gen.js",
-    "prettify": "prettier --no-semi --print-width 100 --single-quote --trailing-comma none --write '**/*.js'",
-    "standard": "standard --fix",
-    "fix:style": "npm run prettify && npm run standard",
-    "check:lint": "eslint src/*.js",
+    "fix:style": "prettier --no-semi --print-width 100 --single-quote --trailing-comma none --write '**/*.js' && standard --fix",
+    "check:lint": "eslint --format=codeframe '**/*.js'",
     "check:style": "standard",
+    "check:duplicated": "jscpd",
+    "check:all": "npm run check:lint && npm run check:style && npm run check:duplicated",
     "bundle": "webpack",
     "bundle:aws": "./bin/bundle.sh aws",
     "bundle:server": "./bin/bundle.sh server",
-    "test": "jest --verbose",
-    "test:unit": "jest --collect-coverage",
-    "coverage:report": "codecov --token=\"$CODECOV_TOKEN\""
+    "coverage": "codecov --token=\"$CODECOV_TOKEN\"",
+    "prepare": "husky install"
   },
   "standard": {
     "parser": "@babel/eslint-parser"
   },
-  "jest": {
-    "testEnvironment": "node",
-    "coveragePathIgnorePatterns": [
-      "/node_modules/",
-      "/dist/"
+  "eslintIgnore": [
+    "report"
+  ],
+  "lint-staged": {
+    "**/*.js": [
+      "npm run fix:style"
+    ]
+  },
+  "jscpd": {
+    "pattern": "**/*.js",
+    "threshold": 5,
+    "reporters": [
+      "html",
+      "console"
     ],
-    "coverageThreshold": {
-      "global": {
-        "lines": 80
-      }
-    }
+    "ignore": [
+      "report"
+    ],
+    "absolute": true,
+    "gitignore": true
   },
   "dependencies": {
     "mustache": "^4.2.0"
@@ -51,17 +59,14 @@
     "@babel/eslint-parser": "^7.14.7",
     "@babel/plugin-transform-modules-commonjs": "^7.14.5",
     "@babel/preset-env": "^7.14.8",
-    "babel-jest": "^27.0.6",
     "babel-loader": "^8.2.2",
     "codecov": "^3.8.3",
     "eslint": "^7.31.0",
     "husky": "^7.0.1",
-    "jest": "^27.0.6",
     "js-yaml": "^4.1.0",
     "jscpd": "^3.3.26",
     "lint-staged": "^11.0.1",
     "nodemon": "^2.0.12",
-    "nyc": "^15.1.0",
     "prettier": "^2.3.2",
     "standard": "^16.0.3",
     "webpack": "^5.45.1",
