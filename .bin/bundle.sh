@@ -8,34 +8,27 @@ clean() {
 
 bundle() {
     cp -r src bundle
+    (
+        cd bundle/providers
+        cp "$1/index.js" ..
+    )
 
-    cp "providers/$1/index.js" bundle
     npm run gen
     npm run bundle
 }
 
 compact() {
-    cd dist
-    zip -r bundle.zip .
-
-    cd ..
-    mv dist/bundle.zip .
+    (
+        cd dist
+        zip -r bundle.zip .
+    )
 }
 
-get_artifact() {
-    mv dist/index.js .
-}
-
+clean
 bundle "$1"
 
 case "$1" in
     aws)
         compact
         ;;
-
-    server)
-        get_artifact
-        ;;
 esac
-
-clean

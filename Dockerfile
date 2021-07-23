@@ -1,4 +1,4 @@
-FROM node:14.16.1-alpine AS base
+FROM node:15.14-alpine AS base
 MAINTAINER Caian R. Ertl <hi@caian.org>
 WORKDIR /usr/msgboi
 

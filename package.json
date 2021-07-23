@@ -2,7 +2,6 @@
   "name": "msgboi",
   "version": "0.2.1",
   "description": "send beautiful slack notifications from gitlab events",
-  "main": "index.js",
   "author": "Caian R. Ertl <hi@caian.org>",
   "license": "CC0-1.0",
   "repository": {
@@ -14,15 +13,17 @@
   },
   "homepage": "https://github.com/caian-org/msgboi#readme",
   "scripts": {
-    "gen": "node bin/gen.js",
-    "fix:style": "prettier --no-semi --print-width 100 --single-quote --trailing-comma none --write '**/*.js' && standard --fix",
-    "check:lint": "eslint --format=codeframe '**/*.js'",
+    "gen": "node .bin/gen.js",
+    "prettier-fix": "prettier --no-semi --print-width 100 --single-quote --trailing-comma none --write 'src/**/*.js'",
+    "standard-fix": "standard --fix src",
+    "fix:style": "npm run prettier-fix & npm run standard-fix",
+    "check:lint": "eslint --format=codeframe 'src/**/*.js'",
     "check:style": "standard",
     "check:duplicated": "jscpd",
     "check:all": "npm run check:lint && npm run check:style && npm run check:duplicated",
     "bundle": "webpack",
-    "bundle:aws": "./bin/bundle.sh aws",
-    "bundle:server": "./bin/bundle.sh server",
+    "bundle:aws": "sh .bin/bundle.sh aws",
+    "bundle:server": "sh .bin/bundle.sh server",
     "coverage": "codecov --token=\"$CODECOV_TOKEN\"",
     "prepare": "husky install"
   },
@@ -30,15 +31,18 @@
     "parser": "@babel/eslint-parser"
   },
   "eslintIgnore": [
+    "bundle",
+    "dist",
     "report"
   ],
   "lint-staged": {
-    "**/*.js": [
-      "npm run fix:style"
+    "src/**/*.js": [
+      "npm run prettier-fix",
+      "npm run standard-fix"
     ]
   },
   "jscpd": {
-    "pattern": "**/*.js",
+    "pattern": "src/**/*.js",
     "threshold": 5,
     "reporters": [
       "html",
