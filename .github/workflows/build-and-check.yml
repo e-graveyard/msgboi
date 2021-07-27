@@ -1,0 +1,44 @@
+name: build-and-check
+
+on:
+  push:
+    paths-ignore:
+      - "**.md"
+
+jobs:
+  check-code:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Check code
+        run: npm run check:all
+
+  build-bundles:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use NodeJS
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: AWS Lambda bundle
+        run: npm run bundle:aws
+
+      - name: Local server bundle
+        run: npm run bundle:server
