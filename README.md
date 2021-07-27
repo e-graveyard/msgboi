@@ -1,4 +1,4 @@
-[![Build Status][travis-shield]][travis-url]
+[![Build & Check][gh-bnc-shield]][gh-bnc-url]
 [![Code Quality][lgtm-shield]][lgtm-url]
 [![GitHub tag][tag-shield]][tag-url]
 
@@ -16,8 +16,8 @@ A cloud-native microservice that sends Slack notifications from GitLab events.
 
 [mustache]: https://github.com/janl/mustache.js
 
-[travis-shield]: https://img.shields.io/travis/caian-org/msgboi.svg?logo=travis-ci&logoColor=FFF&style=flat-square
-[travis-url]: https://travis-ci.org/caian-org/msgboi
+[gh-bnc-shield]: https://img.shields.io/github/workflow/status/caian-org/msgboi/build-and-check?label=build%20%26%20check&logo=github&style=flat-square
+[gh-bnc-url]: https://github.com/caian-org/msgboi/actions/workflows/build-and-check.yml
 
 [lgtm-shield]: https://img.shields.io/lgtm/grade/javascript/g/caian-org/msgboi.svg?logo=lgtm&style=flat-square
 [lgtm-url]: https://lgtm.com/projects/g/caian-org/msgboi/context:javascript
