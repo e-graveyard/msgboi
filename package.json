@@ -27,6 +27,8 @@
     "fix:style": "npm run prettier-fix & npm run standard-fix",
     "prettier-fix": "prettier --no-semi --print-width 100 --single-quote --trailing-comma none --write 'src/**/*.js'",
     "standard-fix": "standard --fix src",
+    "clean": "rm -rf dist report",
+    "commit": "cz",
     "coverage": "codecov --token=\"$CODECOV_TOKEN\"",
     "prepare": "husky install"
   },
@@ -61,23 +63,32 @@
     "mustache": "^4.2.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.14.8",
-    "@babel/core": "^7.14.8",
-    "@babel/eslint-parser": "^7.14.7",
-    "@babel/plugin-transform-modules-commonjs": "^7.14.5",
-    "@babel/preset-env": "^7.14.8",
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.5",
+    "@babel/eslint-parser": "^7.15.7",
+    "@babel/plugin-transform-modules-commonjs": "^7.15.4",
+    "@babel/preset-env": "^7.15.6",
+    "@commitlint/cli": "^13.2.0",
+    "@commitlint/config-conventional": "^13.2.0",
     "babel-loader": "^8.2.2",
     "codecov": "^3.8.3",
-    "eslint": "^7.31.0",
-    "husky": "^7.0.1",
+    "commitizen": "^4.2.4",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^7.32.0",
+    "husky": "^7.0.2",
     "js-yaml": "^4.1.0",
     "jscpd": "^3.3.26",
-    "lint-staged": "^11.1.1",
-    "nodemon": "^2.0.12",
-    "npm-check-updates": "^11.8.3",
-    "prettier": "^2.3.2",
+    "lint-staged": "^11.1.2",
+    "nodemon": "^2.0.13",
+    "npm-check-updates": "^11.8.5",
+    "prettier": "^2.4.1",
     "standard": "^16.0.3",
-    "webpack": "^5.47.0",
-    "webpack-cli": "^4.7.2"
+    "webpack": "^5.55.0",
+    "webpack-cli": "^4.8.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
