@@ -6,36 +6,26 @@ on:
       - "**.md"
 
 jobs:
-  check-code:
+  build-and-check:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        nodejs-version: ['17', '16.13', '14.18', '12.22']
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Use NodeJS
+      - name: Setup NodeJS ${{ matrix.nodejs-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: '15.x'
+          node-version: ${{ matrix.nodejs-version }}
 
       - name: Install dependencies
         run: npm i
 
       - name: Check code
         run: npm run check:all
-
-  build-bundles:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Use NodeJS
-        uses: actions/setup-node@v1
-        with:
-          node-version: '15.x'
-
-      - name: Install dependencies
-        run: npm i
 
       - name: AWS Lambda bundle
         run: npm run bundle:aws
