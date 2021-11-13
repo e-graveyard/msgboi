@@ -29,7 +29,6 @@
     "standard-fix": "standard --fix src",
     "clean": "rm -rf dist report",
     "commit": "cz",
-    "coverage": "codecov --token=\"$CODECOV_TOKEN\"",
     "prepare": "husky install"
   },
   "standard": {
@@ -76,7 +75,6 @@
     "@commitlint/cli": "^14.1.0",
     "@commitlint/config-conventional": "^14.1.0",
     "babel-loader": "^8.2.3",
-    "codecov": "^3.8.3",
     "commitizen": "^4.2.4",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "^7.32.0",
