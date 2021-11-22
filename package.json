@@ -17,7 +17,7 @@
     "bundle": "webpack",
     "bundle:aws": "sh .bin/bundle.sh aws",
     "bundle:server": "sh .bin/bundle.sh server",
-    "bump:dev": "ncu --upgrade --dep dev",
+    "bump:dev": "ncu --upgrade --dep dev --target minor",
     "bump:prod": "ncu --upgrade --dep prod --target minor",
     "bump:all": "npm run bump:dev && npm run bump:prod",
     "check:lint": "eslint --format=codeframe 'src/**/*.js'",
@@ -69,9 +69,9 @@
   "devDependencies": {
     "@babel/cli": "^7.16.0",
     "@babel/core": "^7.16.0",
-    "@babel/eslint-parser": "^7.16.0",
+    "@babel/eslint-parser": "^7.16.3",
     "@babel/plugin-transform-modules-commonjs": "^7.16.0",
-    "@babel/preset-env": "^7.16.0",
+    "@babel/preset-env": "^7.16.4",
     "@commitlint/cli": "^14.1.0",
     "@commitlint/config-conventional": "^14.1.0",
     "babel-loader": "^8.2.3",
@@ -82,13 +82,13 @@
     "eslint-plugin-import": "^2.25.3",
     "husky": "^7.0.4",
     "js-yaml": "^4.1.0",
-    "jscpd": "^3.3.26",
+    "jscpd": "^3.4.2",
     "lint-staged": "^11.2.6",
-    "nodemon": "^2.0.14",
-    "npm-check-updates": "^12.0.0",
+    "nodemon": "^2.0.15",
+    "npm-check-updates": "^12.0.2",
     "prettier": "^2.4.1",
     "standard": "^16.0.4",
-    "webpack": "^5.62.1",
+    "webpack": "^5.64.2",
     "webpack-cli": "^4.9.1"
   }
 }
