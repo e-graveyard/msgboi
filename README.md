@@ -28,10 +28,10 @@ A cloud-native microservice that sends Slack notifications from GitLab events.
 
 ## License
 
-To the extent possible under law, [Caian Rais Ertl][me] has waived __all
-copyright and related or neighboring rights to this work__. In the spirit of
-_freedom of information_, I encourage you to fork, modify, change, share, or do
-whatever you like with this project! [`^C ^V`][kopimi]
+To the extent possible under law, [Caian Ertl][me] has waived __all copyright
+and related or neighboring rights to this work__. In the spirit of _freedom of
+information_, I encourage you to fork, modify, change, share, or do whatever
+you like with this project! [`^C ^V`][kopimi]
 
 [![License][cc-shield]][cc-url]
 
