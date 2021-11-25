@@ -1,4 +1,4 @@
-FROM node:15.14-alpine AS base
+FROM node:16.13-alpine AS base
 MAINTAINER Caian R. Ertl <hi@caian.org>
 WORKDIR /usr/msgboi
 
@@ -13,5 +13,5 @@ RUN npm run bundle:server
 
 FROM base AS run
 EXPOSE 8080
-COPY --from=build /usr/msgboi/index.js .
+COPY --from=build /usr/msgboi/dist/index.js .
 ENTRYPOINT ["node", "index.js"]
