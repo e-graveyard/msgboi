@@ -4,25 +4,25 @@
 
 # msgboi
 
-<img src="logo.svg" height="210px" align="right"/>
+<img src="logo.svg" height="240px" align="right"/>
 
 A cloud-native microservice that sends Slack notifications from GitLab events.
 
 - __Ludicrously small.__ The minified & gzipped bundle weights less than 10kb.
-- __Fast.__ On AWS Lambda, each execution takes an average of 125 to 250 ms.
+- __Fast.__ On AWS Lambda, each execution takes an average of 250 ms.
 - __Minimal.__ In production, only [mustache][mustache] is required.
 - __Highly customizable.__ Notification messages can be changed with ease.
 - __Multicloud.__ *(WIP)* Deploy on Amazon, Azure, Google or Heroku.
 
 [mustache]: https://github.com/janl/mustache.js
 
-[gh-bnc-shield]: https://img.shields.io/github/workflow/status/caian-org/msgboi/build-and-check?label=build%20%26%20check&logo=github&style=flat-square
+[gh-bnc-shield]: https://img.shields.io/github/workflow/status/caian-org/msgboi/build-and-check?label=build%20%26%20check&logo=github&style=for-the-badge
 [gh-bnc-url]: https://github.com/caian-org/msgboi/actions/workflows/build-and-check.yml
 
-[lgtm-shield]: https://img.shields.io/lgtm/grade/javascript/g/caian-org/msgboi.svg?logo=lgtm&style=flat-square
+[lgtm-shield]: https://img.shields.io/lgtm/grade/javascript/g/caian-org/msgboi.svg?logo=lgtm&style=for-the-badge
 [lgtm-url]: https://lgtm.com/projects/g/caian-org/msgboi/context:javascript
 
-[tag-shield]: https://img.shields.io/github/tag/caian-org/msgboi.svg?logo=git&logoColor=FFF&style=flat-square
+[tag-shield]: https://img.shields.io/github/tag/caian-org/msgboi.svg?logo=git&logoColor=FFF&style=for-the-badge
 [tag-url]: https://github.com/caian-org/msgboi/releases
 
 
